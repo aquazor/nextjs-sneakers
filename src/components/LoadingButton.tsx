@@ -1,15 +1,14 @@
 import Spinner from './Spinner';
-import { Button } from './ui/button';
 
-interface Props {
+interface Props extends React.ComponentProps<'button'> {
   loading: boolean;
   children: React.ReactNode;
 }
 
-export default function LoadingButton({ loading, children }: Props) {
+export default function LoadingButton({ loading, children, ...rest }: Props) {
   return (
-    <Button className="w-full" type="submit" disabled={loading}>
+    <button disabled={loading} {...rest}>
       {loading ? <Spinner /> : children}
-    </Button>
+    </button>
   );
 }
