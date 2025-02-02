@@ -1,32 +1,27 @@
 'use client';
 
 import Link from 'next/link';
-import { Button } from './ui/button';
-import { handleSignOut } from '@/app/actions/authActions';
+import Image from 'next/image';
 import { useSession } from 'next-auth/react';
-import Spinner from './Spinner';
+import { logout } from '@/app/actions/authActions';
 
 export default function Appbar() {
   const { data: session, status } = useSession();
 
   return (
-    <header className="border-b border-neutral-500 ">
-      <div className="container">
+    <header className="border-b border-neutral-500">
+      <div className="px-8">
         <div className="flex items-center justify-between py-2">
           {status === 'loading' ? (
             <>
-              <div className="flex gap-2">
-                <div className="px-4 py-2 w-20">
-                  <Spinner />
-                </div>
-
-                <div className="px-4 py-2 w-20">
-                  <Spinner />
-                </div>
+              <div className="flex gap-2 animate-pulse">
+                <div className="h-6 my-1.5 w-20 bg-primary/35 border-primary border opacity-25" />
+                <div className="h-6 my-1.5 w-20 bg-primary/35 border-primary border opacity-25" />
               </div>
 
-              <div className="px-4 py-2 w-16">
-                <Spinner />
+              <div className="flex gap-2 items-center animate-pulse">
+                <div className="size-[34px] bg-primary/35 border-primary border rounded-full opacity-25" />
+                <div className="h-8 w-20 bg-primary/35 border-primary border opacity-25" />
               </div>
             </>
           ) : (
@@ -34,28 +29,46 @@ export default function Appbar() {
               <nav>
                 <ul className="flex gap-2">
                   <li>
-                    <Button variant={'link'} asChild>
-                      <Link href={'/'}>Home</Link>
-                    </Button>
+                    <Link
+                      className="px-3 py-1.5 hover:underline underline-offset-2"
+                      href={'/'}
+                    >
+                      Home
+                    </Link>
                   </li>
                   <li>
-                    <Button variant={'link'} asChild>
-                      <Link href={'/dashboard'}>Dashboard</Link>
-                    </Button>
+                    <Link
+                      className="px-3 py-1.5 hover:underline underline-offset-2"
+                      href={'/dashboard'}
+                    >
+                      Dashboard
+                    </Link>
                   </li>
                 </ul>
               </nav>
 
               {session ? (
-                <form action={handleSignOut}>
-                  <Button variant={'default'} type="submit">
-                    Sign out
-                  </Button>
-                </form>
+                <div className="flex items-center gap-2">
+                  <Image
+                    src={session.user?.image ?? ''}
+                    alt="Avatar"
+                    width={34}
+                    height={34}
+                    className="rounded-full"
+                  />
+                  <form action={logout}>
+                    <button
+                      className="px-3 py-1.5 bg-primary text-primary-foreground"
+                      type="submit"
+                    >
+                      Sign out
+                    </button>
+                  </form>
+                </div>
               ) : (
-                <Button asChild>
+                <button className="px-3 py-1.5 bg-primary text-primary-foreground">
                   <Link href={'/sign-in'}>Sign in</Link>
-                </Button>
+                </button>
               )}
             </>
           )}
