@@ -59,6 +59,25 @@ export default {
         sm: 'calc(var(--radius) - 4px)',
       },
     },
+    animation: {
+      shimmer: 'shimmer 1.5s infinite linear',
+      pulse: 'pulse 0.8s infinite linear alternate',
+      spin: 'spin 1s linear infinite',
+    },
+    keyframes: {
+      shimmer: {
+        '0%': { 'background-position': '-200% 0' },
+        '100%': { 'background-position': '200% 0' },
+      },
+      pulse: {
+        '0%': { opacity: '0.25' },
+        '100%': { opacity: '1' },
+      },
+      spin: {
+        '0%': { transform: 'rotate(0deg)' },
+        '100%': { transform: 'rotate(360deg)' },
+      },
+    },
   },
-  plugins: [require('tailwindcss-animate')],
+  plugins: [],
 } satisfies Config;
