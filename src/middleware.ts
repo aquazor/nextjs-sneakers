@@ -10,7 +10,14 @@ export default async function middleware(req: NextRequest) {
   const isPublicRoute = PUBLIC_ROUTES.includes(nextUrl.pathname);
   const isAuthed = !!session?.user;
 
-  if (!isAuthed && !isPublicRoute) {
+  if (isPublicRoute) {
+    if (nextUrl.pathname === '/sign-in' && isAuthed) {
+      return NextResponse.redirect(new URL('/', nextUrl));
+    }
+    return NextResponse.next();
+  }
+
+  if (!isAuthed) {
     return NextResponse.redirect(new URL('/sign-in', nextUrl));
   }
 
