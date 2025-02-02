@@ -1,34 +1,21 @@
 'use server';
 
-import { signIn, signOut } from '@/auth';
 import { AuthError } from 'next-auth';
+import { signIn, signOut } from '@/auth';
 
-export async function handleCredentialsSignin({
-  email,
-  password,
-}: {
-  email: string;
-  password: string;
-}) {
+export async function socialSignIn(providerId: string, callbackUrl: string | null) {
   try {
-    await signIn('credentials', { email, password, redirectTo: '/' });
+    await signIn(providerId, {
+      redirectTo: callbackUrl ?? '/',
+    });
   } catch (error) {
     if (error instanceof AuthError) {
-      switch (error.type) {
-        case 'CredentialsSignin':
-          return {
-            message: 'Invalid credentials',
-          };
-        default:
-          return {
-            message: 'Something went wrong',
-          };
-      }
+      throw { message: 'Something went wrong. Try again later' };
     }
     throw error;
   }
 }
 
-export async function handleSignOut() {
+export async function logout() {
   await signOut({ redirectTo: '/sign-in' });
 }

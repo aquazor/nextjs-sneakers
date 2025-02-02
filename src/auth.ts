@@ -1,42 +1,37 @@
 import NextAuth from 'next-auth';
-import Credentials from 'next-auth/providers/credentials';
-import { signInSchema } from './lib/zod';
-import { NextResponse } from 'next/server';
+import GitHub from 'next-auth/providers/github';
+import Google from 'next-auth/providers/google';
+import { Provider } from 'next-auth/providers';
 
-const publicRoutes = ['/sign-in'];
-const protectedRoutes = ['/dashboard'];
-
-export const { auth, handlers, signIn, signOut } = NextAuth({
-  providers: [
-    Credentials({
-      authorize: async (credentials) => {
-        const parsed = signInSchema.safeParse(credentials);
-
-        if (!parsed.success) {
-          return null;
-        }
-
-        return { id: '0', email: credentials.email as string };
+const providers: Provider[] = [
+  GitHub,
+  Google({
+    clientId: process.env.GOOGLE_CLIENT_ID,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    authorization: {
+      params: {
+        prompt: 'consent',
+        access_type: 'offline',
+        response_type: 'code',
       },
-    }),
-  ],
-  callbacks: {
-    authorized: ({ request: { nextUrl }, auth }) => {
-      const isLoggedIn = !!auth?.user;
-      const { pathname } = nextUrl;
-      const isPublicRoute = publicRoutes.includes(pathname);
-      const isProtectedRoute = protectedRoutes.includes(pathname);
-
-      if (isProtectedRoute && !isLoggedIn) {
-        return NextResponse.redirect(new URL('/sign-in', nextUrl));
-      }
-
-      if (isPublicRoute && isLoggedIn) {
-        return NextResponse.redirect(new URL('/dashboard', nextUrl));
-      }
-
-      return !!auth;
     },
+  }),
+];
+
+export const providerMap = providers
+  .map((provider) => {
+    if (typeof provider === 'function') {
+      const providerData = provider();
+      return { id: providerData.id, name: providerData.name };
+    } else {
+      return { id: provider.id, name: provider.name };
+    }
+  })
+  .filter((provider) => provider.id !== 'credentials');
+
+export const { handlers, auth, signIn, signOut } = NextAuth({
+  providers,
+  pages: {
+    signIn: '/sign-in',
   },
-  pages: { signIn: '/sign-in' },
 });
