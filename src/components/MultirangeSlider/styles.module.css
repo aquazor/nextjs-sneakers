@@ -1,0 +1,104 @@
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.slider {
+  width: 234px;
+  position: relative;
+}
+
+.slider__track,
+.slider__range,
+.slider__leftValue,
+.slider__rightValue {
+  position: absolute;
+}
+
+.slider__track,
+.slider__range {
+  border-radius: 3px;
+  height: 5px;
+}
+
+.slider__track {
+  background-color: #ced4da;
+  width: 100%;
+  z-index: 1;
+}
+
+.slider__range {
+  background-color: #404040;
+  z-index: 2;
+}
+
+.slider__leftValue,
+.slider__rightValue {
+  color: var(--foreground);
+  font-size: 0.75rem;
+  margin-top: 10px;
+}
+
+.slider__leftValue {
+  left: 4px;
+}
+
+.slider__rightValue {
+  right: -4px;
+}
+
+/* Removing the default appearance */
+.thumb,
+.thumb::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.thumb {
+  pointer-events: none;
+  position: absolute;
+  height: 0;
+  width: 234px;
+  outline: none;
+}
+
+.thumb__zIndex3 {
+  z-index: 3;
+}
+
+.thumb__zIndex4 {
+  z-index: 4;
+}
+
+.thumb__zIndex5 {
+  z-index: 5;
+}
+
+/* For Chrome browsers */
+.thumb::-webkit-slider-thumb {
+  background-color: #f1f5f7;
+  border: none;
+  border-radius: 50%;
+  box-shadow: 0 0 1px 1px #ced4da;
+  cursor: pointer;
+  height: 16px;
+  width: 16px;
+  margin-top: 4px;
+  pointer-events: all;
+  position: relative;
+}
+
+/* For Firefox browsers */
+.thumb::-moz-range-thumb {
+  background-color: #f1f5f7;
+  border: none;
+  border-radius: 50%;
+  box-shadow: 0 0 1px 1px #ced4da;
+  cursor: pointer;
+  height: 16px;
+  width: 16px;
+  margin-top: 4px;
+  pointer-events: all;
+  position: relative;
+}
