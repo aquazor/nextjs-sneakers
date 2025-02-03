@@ -1,4 +1,5 @@
 import type { Config } from 'tailwindcss';
+import scrollBarPlugin from 'tailwind-scrollbar';
 
 export default {
   darkMode: ['class'],
@@ -61,7 +62,7 @@ export default {
     },
     animation: {
       shimmer: 'shimmer 1.5s infinite linear',
-      pulse: 'pulse 0.8s infinite linear alternate',
+      pulse: 'pulse 0.6s infinite linear alternate',
       spin: 'spin 1s linear infinite',
     },
     keyframes: {
@@ -70,7 +71,7 @@ export default {
         '100%': { 'background-position': '200% 0' },
       },
       pulse: {
-        '0%': { opacity: '0.25' },
+        '0%': { opacity: '0.4' },
         '100%': { opacity: '1' },
       },
       spin: {
@@ -79,5 +80,5 @@ export default {
       },
     },
   },
-  plugins: [],
+  plugins: [scrollBarPlugin],
 } satisfies Config;
