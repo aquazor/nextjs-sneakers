@@ -69,4 +69,7 @@ body {
   body {
     @apply bg-background text-foreground;
   }
+  input {
+    @apply focus-visible:outline-none focus-visible:border-foreground transition-colors bg-transparent;
+  }
 }
