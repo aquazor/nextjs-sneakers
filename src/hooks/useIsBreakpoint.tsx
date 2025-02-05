@@ -4,11 +4,11 @@ type Breakpoint = number;
 
 const getIsBreakpoint = (breakpoint: Breakpoint) => {
   if (typeof window !== 'undefined') {
-    return window.innerWidth <= breakpoint;
+    return window.innerWidth <= breakpoint - 1;
   }
 };
 
-export default function useIsMobile(breakpoint: Breakpoint) {
+export default function useIsBreakpoint(breakpoint: Breakpoint) {
   const [isBreakpoint, setIsBreakpoint] = useState(getIsBreakpoint(breakpoint));
 
   useEffect(() => {
