@@ -9,8 +9,11 @@ export async function GET(req: Request) {
 
   try {
     const { searchParams } = new URL(req.url);
+
     const limit = parseInt(searchParams.get('limit') || '8', 10);
     const skip = parseInt(searchParams.get('skip') || '0', 10);
+
+    const searchTerm = searchParams.get('searchTerm') || '';
 
     const brandsParam = searchParams.get('brands');
     const brands = brandsParam ? brandsParam.split(',') : [];
@@ -23,11 +26,19 @@ export async function GET(req: Request) {
 
     const query: Record<string, unknown> = {};
 
+    // Filter by search term in product name
+    if (searchTerm.length > 0) {
+      query.name = {
+        $regex: searchTerm,
+        $options: 'i',
+      };
+    }
+
     // Filter by brand name in product title
     if (brands.length > 0) {
       query.name = {
-        $regex: brands.map((brand) => `(${brand})`).join('|'), // Create regex pattern
-        $options: 'i', // Case-insensitive search
+        $regex: brands.map((brand) => `(${brand})`).join('|'),
+        $options: 'i',
       };
     }
 

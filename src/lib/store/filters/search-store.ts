@@ -2,19 +2,19 @@ import { create } from 'zustand';
 import { SearchTerm } from './types';
 
 interface SearchTermState {
-  term: SearchTerm;
-  setTerm: (term: SearchTerm) => void;
+  searchTerm: SearchTerm;
+  setSearchTerm: (searchTerm: SearchTerm) => void;
   clearTerm: () => void;
 }
 
 export const useSearchStore = create<SearchTermState>()((set) => ({
-  term: '',
-  setTerm(term) {
+  searchTerm: '',
+  setSearchTerm(searchTerm) {
     set(() => ({
-      term,
+      searchTerm,
     }));
   },
   clearTerm() {
-    set(() => ({ term: '' }));
+    set(() => ({ searchTerm: '' }));
   },
 }));
