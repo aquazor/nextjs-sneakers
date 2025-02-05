@@ -31,6 +31,7 @@ export default function BrandsPanel() {
             <input
               onChange={(e) => setValue(e.target.value)}
               value={value}
+              autoComplete="off"
               id="searchBrands"
               name="searchBrands"
               type="text"
