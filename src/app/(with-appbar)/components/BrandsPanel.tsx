@@ -2,8 +2,8 @@ import { useState } from 'react';
 import { CiViewList } from 'react-icons/ci';
 import { IoCloseCircleOutline } from 'react-icons/io5';
 import { cn } from '@/lib/utils';
-import { useBrandStore } from '@/store/filters/brands-store';
-import { BRANDS } from '@/store/filters/constants';
+import { useBrandStore } from '@/lib/store/filters/brands-store';
+import { BRANDS } from '@/lib/store/filters/constants';
 
 export default function BrandsPanel() {
   const { brands: selected, selectBrand, clearBrands } = useBrandStore();

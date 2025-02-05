@@ -1,7 +1,7 @@
 import { IoCloseCircleOutline, IoResize } from 'react-icons/io5';
 import { cn } from '@/lib/utils';
-import { useSizeStore } from '@/store/filters/sizes-store';
-import { SIZES } from '@/store/filters/constants';
+import { useSizeStore } from '@/lib/store/filters/sizes-store';
+import { SIZES } from '@/lib/store/filters/constants';
 
 export default function SizesPanel() {
   const { sizes: selected, selectSize, clearSizes } = useSizeStore();

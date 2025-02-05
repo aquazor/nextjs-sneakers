@@ -1,5 +1,5 @@
 import { useProductsContext } from '@/context/productsContext';
-import { clearAllFilters } from '@/store/filters/clear-filters';
+import { clearAllFilters } from '@/lib/store/filters/clear-filters';
 import useFiltersAsParams from '@/app/hooks/useFiltersAsParams';
 import LoadingButton from '@/components/LoadingButton';
 

@@ -1,4 +1,4 @@
-import { MAX_PRICE, MIN_PRICE } from '@/store/filters/constants';
+import { MAX_PRICE, MIN_PRICE } from '@/lib/store/filters/constants';
 import { IProduct } from '../mongoose/models/ItemSchema';
 
 export interface UrlParams {

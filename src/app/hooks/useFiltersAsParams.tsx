@@ -1,6 +1,6 @@
-import { useBrandStore } from '@/store/filters/brands-store';
-import { usePriceStore } from '@/store/filters/price-store';
-import { useSizeStore } from '@/store/filters/sizes-store';
+import { useBrandStore } from '@/lib/store/filters/brands-store';
+import { usePriceStore } from '@/lib/store/filters/price-store';
+import { useSizeStore } from '@/lib/store/filters/sizes-store';
 
 export default function useFiltersAsParams() {
   const { brands } = useBrandStore();

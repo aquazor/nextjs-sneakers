@@ -1,6 +1,6 @@
 import { MongooseError } from 'mongoose';
 import { NextResponse } from 'next/server';
-import { MAX_PRICE, MIN_PRICE } from '@/store/filters/constants';
+import { MAX_PRICE, MIN_PRICE } from '@/lib/store/filters/constants';
 import dbConnect from '@/lib/mongoose/dbConnect';
 import Product, { IProduct } from '@/lib/mongoose/models/ItemSchema';
 

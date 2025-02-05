@@ -1,7 +1,7 @@
 import styles from './styles.module.css';
 import { useEffect, useRef, useCallback } from 'react';
 import { cn } from '@/lib/utils';
-import { usePriceStore } from '@/store/filters/price-store';
+import { usePriceStore } from '@/lib/store/filters/price-store';
 
 interface Props {
   min: number;

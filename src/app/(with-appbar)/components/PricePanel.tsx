@@ -1,5 +1,5 @@
 import { MdOutlinePriceChange } from 'react-icons/md';
-import { MAX_PRICE, MIN_PRICE } from '@/store/filters/constants';
+import { MAX_PRICE, MIN_PRICE } from '@/lib/store/filters/constants';
 import MultiRangeSlider from '@/components/MultirangeSlider/MultirangeSlider';
 
 export default function PricePanel() {

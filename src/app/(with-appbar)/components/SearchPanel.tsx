@@ -5,6 +5,7 @@ export default function SearchPanel() {
     <div className="flex items-center gap-2">
       <GoSearch size={24} className="shrink-0" />
       <input
+        autoComplete="off"
         id="searchProducts"
         name="searchProducts"
         type="text"
