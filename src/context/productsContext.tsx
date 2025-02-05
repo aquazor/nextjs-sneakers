@@ -1,13 +1,13 @@
-import { createContext, useCallback, useContext, useEffect, useState } from 'react';
+import { createContext, useCallback, useContext, useState } from 'react';
 import { IProduct } from '@/lib/mongoose/models/ItemSchema';
-import { fetchProducts, UrlParams } from '@/lib/api/product';
+import { fetchProducts, UrlParams } from '@/lib/api/products';
 
 export interface IProductsContext {
   products: IProduct[];
   moreAvailable: boolean;
   isLoading: boolean;
   loadMore: (params: UrlParams) => Promise<void>;
-  getProducts: (params: UrlParams) => Promise<void>;
+  getProducts: (params: UrlParams, signal?: AbortSignal) => Promise<void>;
 }
 
 const Context = createContext<IProductsContext>({
@@ -25,22 +25,22 @@ export function ProductsProvider({ children }: { children: React.ReactNode }) {
   const [moreAvailable, setMoreAvailable] = useState(true);
   const limit = 8;
 
-  useEffect(() => {
-    const loadInitialData = async () => {
-      try {
-        const { products: data, hasMore } = await fetchProducts({ skip: 0, limit });
-        setProducts(data);
-        setMoreAvailable(hasMore);
-        setSkip(hasMore ? data.length : 0);
-      } catch (error) {
-        console.log(error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+  //   useEffect(() => {
+  //     const loadInitialData = async () => {
+  //       try {
+  //         const { products: data, hasMore } = await fetchProducts({ skip: 0, limit });
+  //         setProducts(data);
+  //         setMoreAvailable(hasMore);
+  //         setSkip(hasMore ? data.length : 0);
+  //       } catch (error) {
+  //         console.log(error);
+  //       } finally {
+  //         setIsLoading(false);
+  //       }
+  //     };
 
-    loadInitialData();
-  }, []);
+  //     loadInitialData();
+  //   }, []);
 
   const loadMore = useCallback(
     async (params: UrlParams) => {
@@ -61,28 +61,36 @@ export function ProductsProvider({ children }: { children: React.ReactNode }) {
     [skip]
   );
 
-  console.log(skip);
+  const getProducts = useCallback(
+    async (params: UrlParams, signal?: AbortSignal): Promise<void> => {
+      try {
+        setIsLoading(true);
+        setSkip(0);
 
-  const getProducts = useCallback(async (params: UrlParams) => {
-    try {
-      setIsLoading(true);
-      setSkip(0);
+        const { products: data, hasMore } = await fetchProducts(
+          {
+            ...params,
+            skip: 0,
+            limit,
+          },
+          signal
+        );
 
-      const { products: data, hasMore } = await fetchProducts({
-        ...params,
-        skip: 0,
-        limit,
-      });
-
-      setProducts(data);
-      setSkip(hasMore ? data.length : 0);
-      setMoreAvailable(hasMore);
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
+        setProducts(data);
+        setSkip(hasMore ? data.length : 0);
+        setMoreAvailable(hasMore);
+      } catch (error) {
+        if (error instanceof Error && error.name === 'AbortError') {
+          console.log('Fetch aborted');
+          return;
+        }
+        console.log(error);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    []
+  );
 
   return (
     <Context

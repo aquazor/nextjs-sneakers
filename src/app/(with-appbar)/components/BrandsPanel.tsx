@@ -15,7 +15,7 @@ export default function BrandsPanel() {
 
   return (
     <div className="mt-4">
-      <div className="flex items-center gap-2 group">
+      <div className="flex items-center gap-2">
         <CiViewList size={24} className="shrink-0" />
         <div className="relative w-full">
           <div className="flex">
@@ -60,7 +60,7 @@ export default function BrandsPanel() {
       </div>
 
       <div className="mt-1 ml-7">
-        <ul className="overflow-auto scrollbar-thin max-h-[calc(1.75rem*5)] p-1">
+        <ul className="overflow-auto scrollbar-thin h-[calc(1.75rem*5)] p-1 scroll-contain">
           {brands.map((brand) => {
             const isSelected = selected.some((value) => value === brand);
 

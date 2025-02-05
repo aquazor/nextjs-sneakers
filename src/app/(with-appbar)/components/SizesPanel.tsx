@@ -8,7 +8,7 @@ export default function SizesPanel() {
 
   return (
     <div>
-      <div className="flex items-center gap-2 group">
+      <div className="flex items-center gap-2">
         <IoResize size={24} className="shrink-0" />
         <div className="relative w-full">
           <div className="px-1 py-0.5 w-full text-sm">Sizes</div>

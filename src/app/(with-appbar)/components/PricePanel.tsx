@@ -4,7 +4,7 @@ import MultiRangeSlider from '@/components/MultirangeSlider/MultirangeSlider';
 
 export default function PricePanel() {
   return (
-    <div className="group flex items-center gap-2">
+    <div className="flex items-center gap-2">
       <MdOutlinePriceChange size={24} className="shrink-0" />
 
       <div className="mb-2">

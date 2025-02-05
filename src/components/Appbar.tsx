@@ -14,12 +14,12 @@ export default function Appbar() {
         <div className="flex items-center justify-between py-2">
           {status === 'loading' ? (
             <>
-              <div className="flex gap-2 animate-pulse">
+              <div className="flex gap-2 animate-pulse-fast">
                 <div className="h-6 my-1.5 w-20 bg-primary/35 border-primary border opacity-25" />
                 <div className="h-6 my-1.5 w-20 bg-primary/35 border-primary border opacity-25" />
               </div>
 
-              <div className="flex gap-2 items-center animate-pulse">
+              <div className="flex gap-2 items-center animate-pulse-fast">
                 <div className="size-[34px] bg-primary/35 border-primary border rounded-full opacity-25" />
                 <div className="h-8 w-20 bg-primary/35 border-primary border opacity-25" />
               </div>

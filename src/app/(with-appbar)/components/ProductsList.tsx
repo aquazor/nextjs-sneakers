@@ -1,15 +1,38 @@
 'use client';
 
-import Image from 'next/image';
 import { useProductsContext } from '@/context/productsContext';
+import useFetchProducts from '@/hooks/useFetchProducts';
 import LoadMoreButton from './LoadMoreButton';
+import ImageWithLoader from '@/components/ImageWithLoader';
+import { useSortStore } from '@/lib/store/sort/sort-store';
 
 export default function ProductsList() {
+  useFetchProducts();
   const { products, isLoading } = useProductsContext();
+  const { sortBy } = useSortStore();
+
+  const sorted =
+    sortBy !== 'none'
+      ? products.toSorted((prod1, prod2) => {
+          if (sortBy === 'name.asc') {
+            return prod2.name.localeCompare(prod1.name);
+          }
+          if (sortBy === 'name.desc') {
+            return prod1.name.localeCompare(prod2.name);
+          }
+          if (sortBy === 'price.asc') {
+            return prod1.price - prod2.price;
+          }
+          if (sortBy === 'price.desc') {
+            return prod2.price - prod1.price;
+          }
+          return 0;
+        })
+      : products;
 
   return (
     <div className="w-full">
-      {products.length === 0 && !isLoading && (
+      {sorted.length === 0 && !isLoading && (
         <div className="px-2 mt-20 flex items-center justify-center">
           <h5 className="text-3xl text-center">
             No results match your filters <span>¯\_(ツ)_/¯</span>
@@ -18,7 +41,7 @@ export default function ProductsList() {
       )}
 
       <ul className="flex flex-wrap justify-center min-[550px]:justify-stretch">
-        {products.length === 0 && isLoading
+        {sorted.length === 0 && isLoading
           ? [...Array(5)].map((_, index) => (
               <li
                 className="p-2 w-full min-[550px]:w-1/2 md:w-1/3 xl:w-1/4 2xl:w-1/5 grid"
@@ -33,19 +56,18 @@ export default function ProductsList() {
                 </div>
               </li>
             ))
-          : products.map((item) => (
+          : sorted.map((item) => (
               <li
                 key={item._id}
                 className="p-2 w-full max-w-[300px] min-[550px]:max-w-full min-[550px]:w-1/2 md:w-1/3 xl:w-1/4 2xl:w-1/5 grid"
               >
                 <div className="shadow-lg border border-border flex flex-col min-[550px]:w-full">
                   <div className="border-b border-border">
-                    <Image
+                    <ImageWithLoader
                       width={250}
                       height={300}
-                      priority
                       quality={100}
-                      src={'/' + item.url}
+                      src={item.url}
                       alt="Sneakers picture"
                       className="object-cover max-h-[300px] block w-full bg-primary/10"
                     />

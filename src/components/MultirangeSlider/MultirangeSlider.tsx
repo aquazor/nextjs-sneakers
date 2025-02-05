@@ -90,39 +90,3 @@ export default function MultiRangeSlider({ min, max, step }: Props) {
     </div>
   );
 }
-
-{
-  /* <input
-min={min}
-max={max}
-className="w-16 border text-center text-sm"
-onChange={(e) => {
-  const value = Number(e.target.value);
-  const notValid = isNaN(value) || value < min || value > max;
-
-  if (notValid) {
-    return;
-  }
-  changePrice([value, maxVal]);
-}}
-type="text"
-value={minVal}
-/> */
-}
-
-// <input
-//   min={min}
-//   max={max}
-//   className="w-16 border text-center text-sm"
-//   onChange={(e) => {
-//     const value = Number(e.target.value);
-//     const notValid = isNaN(value) || value < min || value > max;
-
-//     if (notValid) {
-//       return;
-//     }
-//     changePrice([minVal, value]);
-//   }}
-//   type="text"
-//   value={maxVal}
-// />;

@@ -6,7 +6,6 @@ export const BRANDS = [
   'Adidas',
   'Asics',
   'Puma',
-  'Nike',
   'New Balance',
   'Converse',
   'Reebok',

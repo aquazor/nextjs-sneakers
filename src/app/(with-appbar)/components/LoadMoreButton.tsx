@@ -1,10 +1,10 @@
-import useFiltersAsParams from '@/app/hooks/useFiltersAsParams';
 import LoadingButton from '@/components/LoadingButton';
 import { useProductsContext } from '@/context/productsContext';
+import useFiltersAsParamsAsParams from '@/hooks/useFiltersAsParams';
 
 export default function LoadMoreButton() {
   const { loadMore, moreAvailable, isLoading } = useProductsContext();
-  const params = useFiltersAsParams();
+  const params = useFiltersAsParamsAsParams();
 
   return (
     moreAvailable && (
