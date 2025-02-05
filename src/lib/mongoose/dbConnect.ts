@@ -14,6 +14,6 @@ export default async function dbConnect() {
 
     connection.isConnected = db.connections[0].readyState;
   } catch (error) {
-    console.log(error);
+    console.log('mongoDB connections error:', error);
   }
 }

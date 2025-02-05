@@ -1,11 +1,13 @@
 import { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import { IProduct } from '@/lib/mongoose/models/ItemSchema';
+import { fetchProducts, UrlParams } from '@/lib/api/product';
 
 export interface IProductsContext {
   products: IProduct[];
   moreAvailable: boolean;
   isLoading: boolean;
-  loadMore: () => Promise<void>;
+  loadMore: (params: UrlParams) => Promise<void>;
+  getProducts: (params: UrlParams) => Promise<void>;
 }
 
 const Context = createContext<IProductsContext>({
@@ -13,27 +15,23 @@ const Context = createContext<IProductsContext>({
   moreAvailable: true,
   isLoading: true,
   loadMore: async () => {},
+  getProducts: async () => {},
 });
-
-const fetchProducts = async (skip: number, limit: number) => {
-  const res = await fetch(`/api/products?skip=${skip}&limit=${limit}`);
-  return res.json();
-};
 
 export function ProductsProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
   const [products, setProducts] = useState<IProduct[]>([]);
   const [skip, setSkip] = useState(0);
   const [moreAvailable, setMoreAvailable] = useState(true);
-  const limit = 6;
+  const limit = 8;
 
   useEffect(() => {
     const loadInitialData = async () => {
       try {
-        const data = await fetchProducts(0, 8);
-        setProducts(data.products);
-        setMoreAvailable(data.hasMore);
-        setSkip(data.products.length);
+        const { products: data, hasMore } = await fetchProducts({ skip: 0, limit });
+        setProducts(data);
+        setMoreAvailable(hasMore);
+        setSkip(hasMore ? data.length : 0);
       } catch (error) {
         console.log(error);
       } finally {
@@ -44,24 +42,60 @@ export function ProductsProvider({ children }: { children: React.ReactNode }) {
     loadInitialData();
   }, []);
 
-  const loadMore = useCallback(async () => {
+  const loadMore = useCallback(
+    async (params: UrlParams) => {
+      try {
+        setIsLoading(true);
+
+        const { products, hasMore } = await fetchProducts({ ...params, skip, limit });
+
+        setProducts((prev) => [...prev, ...products]);
+        setSkip((prev) => prev + limit);
+        setMoreAvailable(hasMore);
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [skip]
+  );
+
+  console.log(skip);
+
+  const getProducts = useCallback(async (params: UrlParams) => {
     try {
       setIsLoading(true);
+      setSkip(0);
 
-      const data = await fetchProducts(skip, limit);
+      const { products: data, hasMore } = await fetchProducts({
+        ...params,
+        skip: 0,
+        limit,
+      });
 
-      setProducts((prev) => [...prev, ...data.products]);
-      setSkip(skip + limit);
-      setMoreAvailable(data.hasMore);
+      setProducts(data);
+      setSkip(hasMore ? data.length : 0);
+      setMoreAvailable(hasMore);
     } catch (error) {
       console.log(error);
     } finally {
       setIsLoading(false);
     }
-  }, [skip]);
+  }, []);
 
   return (
-    <Context value={{ products, moreAvailable, loadMore, isLoading }}>{children}</Context>
+    <Context
+      value={{
+        products,
+        moreAvailable,
+        loadMore,
+        isLoading,
+        getProducts,
+      }}
+    >
+      {children}
+    </Context>
   );
 }
 
