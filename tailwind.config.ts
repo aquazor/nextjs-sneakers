@@ -62,7 +62,8 @@ export default {
     },
     animation: {
       shimmer: 'shimmer 1.5s infinite linear',
-      pulse: 'pulse 0.6s infinite linear alternate',
+      pulse: 'pulse 1s infinite linear alternate',
+      'pulse-fast': 'pulse 0.5s infinite linear alternate',
       spin: 'spin 1s linear infinite',
     },
     keyframes: {

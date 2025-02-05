@@ -73,3 +73,9 @@ body {
     @apply focus-visible:outline-none focus-visible:border-foreground transition-colors bg-transparent;
   }
 }
+
+@layer utilities {
+  .scroll-contain {
+    overscroll-behavior: contain;
+  }
+}
