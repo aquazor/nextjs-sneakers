@@ -1,5 +1,6 @@
 export const MIN_PRICE = 0;
 export const MAX_PRICE = 5000;
+export const STEP = 50;
 
 export const BRANDS = [
   'Adidas',

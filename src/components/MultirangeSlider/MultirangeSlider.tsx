@@ -6,9 +6,10 @@ import { usePriceStore } from '@/lib/store/filters/price-store';
 interface Props {
   min: number;
   max: number;
+  step: number;
 }
 
-export default function MultiRangeSlider({ min, max }: Props) {
+export default function MultiRangeSlider({ min, max, step }: Props) {
   const {
     priceRange: [minVal, maxVal],
     changePrice,
@@ -50,6 +51,7 @@ export default function MultiRangeSlider({ min, max }: Props) {
         type="range"
         min={min}
         max={max}
+        step={step}
         value={minVal}
         ref={minValRef}
         onChange={(event) => {
@@ -65,6 +67,7 @@ export default function MultiRangeSlider({ min, max }: Props) {
         type="range"
         min={min}
         max={max}
+        step={step}
         value={maxVal}
         ref={maxValRef}
         onChange={(event) => {
