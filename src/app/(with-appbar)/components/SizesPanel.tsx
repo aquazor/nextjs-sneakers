@@ -1,10 +1,23 @@
 import { IoCloseCircleOutline, IoResize } from 'react-icons/io5';
 import { cn } from '@/lib/utils';
-import { useSizeStore } from '@/lib/store/filters/sizes-store';
-import { SIZES } from '@/lib/store/filters/constants';
+import { SIZES } from '@/constants';
+import { useFilterParamsContext } from '@/context/filtersContext';
 
 export default function SizesPanel() {
-  const { sizes: selected, selectSize, clearSizes } = useSizeStore();
+  const {
+    filterParams: { sizes },
+    setParamByKey,
+  } = useFilterParamsContext();
+
+  const selected = sizes.length ? sizes.split(',') : [];
+
+  const selectSize = (size: string) => {
+    const updatedSizes = selected.includes(size)
+      ? selected.filter((value) => value !== size)
+      : [...selected, size];
+
+    setParamByKey('sizes', updatedSizes.join(','));
+  };
 
   return (
     <div>
@@ -19,7 +32,10 @@ export default function SizesPanel() {
                   Selected:{' '}
                   <span className="text-base text-foreground">{selected.length}</span>
                 </span>
-                <button onClick={clearSizes} className="flex items-center justify-center">
+                <button
+                  onClick={() => setParamByKey('sizes', '')}
+                  className="flex items-center justify-center"
+                >
                   <IoCloseCircleOutline size={20} className="text-red-300" />
                 </button>
               </div>
@@ -32,6 +48,7 @@ export default function SizesPanel() {
         <ul className="grid grid-cols-2 gap-x-2 p-1">
           {SIZES.map((size) => {
             const isSelected = selected.some((value) => value === size);
+
             return (
               <li
                 key={size}
