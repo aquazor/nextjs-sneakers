@@ -1,38 +1,49 @@
 'use client';
 
-import { useProductsContext } from '@/context/productsContext';
-import useFetchProducts from '@/hooks/useFetchProducts';
+import Image from 'next/image';
+import { useEffect, useState } from 'react';
+import { IProduct } from '@/lib/mongoose/models/ItemSchema';
+import { fetchProducts } from '@/lib/api/products';
+import { LIMIT_STR } from '@/constants';
+import { useFilterParamsContext } from '@/context/filtersContext';
 import LoadMoreButton from './LoadMoreButton';
-import ImageWithLoader from '@/components/ImageWithLoader';
-import { useSortStore } from '@/lib/store/sort/sort-store';
 
-export default function ProductsList() {
-  useFetchProducts();
-  const { products, isLoading } = useProductsContext();
-  const { sortBy } = useSortStore();
+interface ProductsListProps {
+  data: IProduct[];
+  hasMore: boolean;
+}
 
-  const sorted =
-    sortBy !== 'none'
-      ? products.toSorted((prod1, prod2) => {
-          if (sortBy === 'name.asc') {
-            return prod2.name.localeCompare(prod1.name);
-          }
-          if (sortBy === 'name.desc') {
-            return prod1.name.localeCompare(prod2.name);
-          }
-          if (sortBy === 'price.asc') {
-            return prod1.price - prod2.price;
-          }
-          if (sortBy === 'price.desc') {
-            return prod2.price - prod1.price;
-          }
-          return 0;
-        })
-      : products;
+export default function ProductsList({ data, hasMore }: ProductsListProps) {
+  const { filterParams } = useFilterParamsContext();
+  const [products, setProducts] = useState(data);
+  const [moreAvailable, setMoreAvailable] = useState(hasMore);
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    setProducts(data);
+    setMoreAvailable(hasMore);
+  }, [data, hasMore]);
+
+  const handleLoadMore = async () => {
+    setIsLoading(true);
+    try {
+      const newProductsData = await fetchProducts({
+        ...filterParams,
+        skip: products.length.toString(),
+        limit: LIMIT_STR,
+      });
+      setProducts((prev) => [...prev, ...newProductsData.products]);
+      setMoreAvailable(newProductsData.hasMore);
+    } catch (error) {
+      console.error('Error fetching more products:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div className="w-full">
-      {sorted.length === 0 && !isLoading && (
+      {products.length === 0 && !isLoading && (
         <div className="px-2 mt-20 flex items-center justify-center">
           <h5 className="text-3xl text-center">
             No results match your filters <span>¯\_(ツ)_/¯</span>
@@ -41,7 +52,7 @@ export default function ProductsList() {
       )}
 
       <ul className="flex flex-wrap justify-center min-[550px]:justify-stretch">
-        {sorted.length === 0 && isLoading
+        {products.length === 0 && isLoading
           ? [...Array(5)].map((_, index) => (
               <li
                 className="p-2 w-full min-[550px]:w-1/2 md:w-1/3 xl:w-1/4 2xl:w-1/5 grid"
@@ -56,14 +67,14 @@ export default function ProductsList() {
                 </div>
               </li>
             ))
-          : sorted.map((item) => (
+          : products.map((item) => (
               <li
                 key={item._id}
-                className="p-2 w-full max-w-[300px] min-[550px]:max-w-full min-[550px]:w-1/2 md:w-1/3 xl:w-1/4 2xl:w-1/5 grid"
+                className="p-2 w-full min-[550px]:w-1/2 md:w-1/3 xl:w-1/4 2xl:w-1/5 grid"
               >
                 <div className="shadow-lg border border-border flex flex-col min-[550px]:w-full">
                   <div className="border-b border-border">
-                    <ImageWithLoader
+                    <Image
                       width={250}
                       height={300}
                       quality={100}
@@ -85,7 +96,9 @@ export default function ProductsList() {
             ))}
       </ul>
 
-      <LoadMoreButton />
+      {moreAvailable && (
+        <LoadMoreButton isLoading={isLoading} onLoadMore={handleLoadMore} />
+      )}
     </div>
   );
 }

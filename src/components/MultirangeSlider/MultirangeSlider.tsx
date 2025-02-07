@@ -1,7 +1,7 @@
 import styles from './styles.module.css';
 import { useEffect, useRef, useCallback } from 'react';
 import { cn } from '@/lib/utils';
-import { usePriceStore } from '@/lib/store/filters/price-store';
+import { useFilterParamsContext } from '@/context/filtersContext';
 
 interface Props {
   min: number;
@@ -11,9 +11,9 @@ interface Props {
 
 export default function MultiRangeSlider({ min, max, step }: Props) {
   const {
-    priceRange: [minVal, maxVal],
-    changePrice,
-  } = usePriceStore();
+    filterParams: { minPrice, maxPrice },
+    setParamByKey,
+  } = useFilterParamsContext();
 
   const minValRef = useRef<HTMLInputElement>(null);
   const maxValRef = useRef<HTMLInputElement>(null);
@@ -25,25 +25,14 @@ export default function MultiRangeSlider({ min, max, step }: Props) {
   );
 
   useEffect(() => {
-    if (maxValRef.current) {
-      const maxPercent = getPercent(+maxValRef.current.value);
-      const minPercent = getPercent(minVal);
-      if (range.current) {
-        range.current.style.left = `${minPercent}%`;
-        range.current.style.width = `${maxPercent - minPercent}%`;
-      }
-    }
-  }, [minVal, getPercent]);
+    if (range.current && minValRef.current && maxValRef.current) {
+      const minPercent = getPercent(Number(minPrice));
+      const maxPercent = getPercent(Number(maxPrice));
 
-  useEffect(() => {
-    if (minValRef.current) {
-      const minPercent = getPercent(+minValRef.current.value);
-      const maxPercent = getPercent(maxVal);
-      if (range.current) {
-        range.current.style.width = `${maxPercent - minPercent}%`;
-      }
+      range.current.style.left = `${minPercent}%`;
+      range.current.style.width = `${maxPercent - minPercent}%`;
     }
-  }, [maxVal, getPercent]);
+  }, [minPrice, maxPrice, getPercent]);
 
   return (
     <div className={styles.container}>
@@ -52,15 +41,15 @@ export default function MultiRangeSlider({ min, max, step }: Props) {
         min={min}
         max={max}
         step={step}
-        value={minVal}
+        value={minPrice}
         ref={minValRef}
         onChange={(event) => {
-          const value = Math.min(+event.target.value, maxVal - 1);
-          changePrice([value, maxVal]);
+          const value = Math.min(+event.target.value, Number(maxPrice) - 1);
+          setParamByKey('minPrice', value.toString());
         }}
         className={cn(
           `${styles.thumb} ${styles.thumb__zIndex3}`,
-          minVal > max - 100 && styles.thumb__zIndex5
+          Number(minPrice) > max - 100 && styles.thumb__zIndex5
         )}
       />
       <input
@@ -68,11 +57,11 @@ export default function MultiRangeSlider({ min, max, step }: Props) {
         min={min}
         max={max}
         step={step}
-        value={maxVal}
+        value={maxPrice}
         ref={maxValRef}
         onChange={(event) => {
-          const value = Math.max(+event.target.value, minVal + 1);
-          changePrice([minVal, value]);
+          const value = Math.max(+event.target.value, Number(minPrice) + 1);
+          setParamByKey('maxPrice', value.toString());
         }}
         className={`${styles.thumb} ${styles.thumb__zIndex4}`}
       />
@@ -81,10 +70,10 @@ export default function MultiRangeSlider({ min, max, step }: Props) {
         <div className={styles.slider__track}></div>
         <div ref={range} className={styles.slider__range}></div>
         <div className="absolute left-0 top-3.5 w-16 border-b text-center text-sm">
-          {minVal}
+          {minPrice}
         </div>
         <div className="absolute right-0 top-3.5 w-16 border-b text-center text-sm">
-          {maxVal}
+          {maxPrice}
         </div>
       </div>
     </div>

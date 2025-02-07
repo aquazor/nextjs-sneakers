@@ -1,22 +1,20 @@
 import LoadingButton from '@/components/LoadingButton';
-import { useProductsContext } from '@/context/productsContext';
-import useFiltersAsParamsAsParams from '@/hooks/useFiltersAsParams';
 
-export default function LoadMoreButton() {
-  const { loadMore, moreAvailable, isLoading } = useProductsContext();
-  const params = useFiltersAsParamsAsParams();
+interface LoadMoreButtonProps {
+  onLoadMore: () => Promise<void>;
+  isLoading: boolean;
+}
 
+export default function LoadMoreButton({ onLoadMore, isLoading }: LoadMoreButtonProps) {
   return (
-    moreAvailable && (
-      <div className="mt-5 flex items-center justify-center">
-        <LoadingButton
-          loading={isLoading}
-          onClick={async () => await loadMore({ ...params, skip: 0 })}
-          className="bg-primary min-w-28 h-8 flex items-center justify-center gap-2 text-white"
-        >
-          Load More
-        </LoadingButton>
-      </div>
-    )
+    <div className="mt-3 flex items-center justify-center">
+      <LoadingButton
+        loading={isLoading}
+        onClick={onLoadMore}
+        className="bg-primary min-w-28 h-8 flex items-center justify-center gap-2 text-white"
+      >
+        Load More
+      </LoadingButton>
+    </div>
   );
 }

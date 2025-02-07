@@ -4,12 +4,12 @@ import { useEffect, useState } from 'react';
 import { RiFilter2Line, RiFilter2Fill } from 'react-icons/ri';
 import { IoCloseCircleOutline } from 'react-icons/io5';
 import useIsBreakpoint from '@/hooks/useIsBreakpoint';
+import SearchPanel from './SearchPanel';
+import SortPanel from './SortPanel';
+import PricePanel from './PricePanel';
 import BrandsPanel from './BrandsPanel';
 import SizesPanel from './SizesPanel';
-import PricePanel from './PricePanel';
-import SearchPanel from './SearchPanel';
 import ButtonsPanel from './ButtonsPanel';
-import SortPanel from './SortPanel';
 
 export default function Filters() {
   const [isOpen, setIsOpen] = useState(false);

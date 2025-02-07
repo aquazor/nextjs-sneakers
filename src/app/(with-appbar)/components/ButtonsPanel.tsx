@@ -1,10 +1,12 @@
-import { clearAllFilters } from '@/lib/store/filters/clear-filters';
+import { useFilterParamsContext } from '@/context/filtersContext';
 
 export default function ButtonsPanel() {
+  const { clearParams } = useFilterParamsContext();
+
   return (
     <div className="mx-4">
       <button
-        onClick={clearAllFilters}
+        onClick={clearParams}
         className="w-full p-1 bg-primary text-primary-foreground"
       >
         Clear all
