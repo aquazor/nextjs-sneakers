@@ -1,31 +1,25 @@
-import { MAX_PRICE, MIN_PRICE } from '@/lib/store/filters/constants';
 import { IProduct } from '../mongoose/models/ItemSchema';
-
-export interface UrlParams {
-  skip?: number;
-  limit?: number;
-  searchTerm?: string;
-  brands?: string;
-  sizes?: string;
-  minPrice?: number;
-  maxPrice?: number;
-}
+import { MAX_PRICE, MIN_PRICE } from '@/constants';
+import { UrlFilterParams } from '@/constants/types';
 
 export async function fetchProducts(
-  { skip, limit, searchTerm, brands, sizes, minPrice, maxPrice }: UrlParams,
+  { skip, limit, searchTerm, brands, sizes, minPrice, maxPrice, sort }: UrlFilterParams,
   signal?: AbortSignal
 ): Promise<{ products: IProduct[]; hasMore: boolean }> {
   const params = new URLSearchParams();
-
-  if (skip !== undefined) params.append('skip', skip.toString());
-  if (limit !== undefined) params.append('limit', limit.toString());
+  if (skip !== undefined) params.append('skip', skip);
+  if (limit !== undefined) params.append('limit', limit);
   if (searchTerm) params.append('searchTerm', searchTerm);
   if (brands) params.append('brands', brands);
   if (sizes) params.append('sizes', sizes);
-  if (minPrice && minPrice > MIN_PRICE) params.append('minPrice', minPrice.toString());
-  if (maxPrice && maxPrice < MAX_PRICE) params.append('maxPrice', maxPrice.toString());
+  if (minPrice !== undefined && Number(minPrice) > MIN_PRICE)
+    params.append('minPrice', minPrice);
+  if (maxPrice !== undefined && Number(maxPrice) < MAX_PRICE)
+    params.append('maxPrice', maxPrice);
+  if (sort) params.append('sort', sort);
 
-  const url = `/api/products?${params.toString()}`;
+  const url = `${process.env.NEXT_PUBLIC_API_URL}/api/products?${params.toString()}`;
+  console.log('fetch called');
   const res = await fetch(url, { signal });
 
   if (!res.ok) {
