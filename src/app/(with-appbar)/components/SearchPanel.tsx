@@ -1,9 +1,14 @@
+'use client';
+
 import { GoSearch } from 'react-icons/go';
-import { useSearchStore } from '@/lib/store/filters/search-store';
 import { IoCloseCircleOutline } from 'react-icons/io5';
+import { useFilterParamsContext } from '@/context/filtersContext';
 
 export default function SearchPanel() {
-  const { searchTerm, setSearchTerm } = useSearchStore();
+  const {
+    filterParams: { searchTerm },
+    setParamByKey,
+  } = useFilterParamsContext();
 
   return (
     <div className="flex items-center gap-2">
@@ -11,7 +16,7 @@ export default function SearchPanel() {
       <div className="flex w-full relative">
         <input
           value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
+          onChange={(e) => setParamByKey('searchTerm', e.target.value)}
           autoComplete="off"
           id="searchTerm"
           name="searchTerm"
@@ -22,7 +27,7 @@ export default function SearchPanel() {
 
         {searchTerm.length > 0 && (
           <button
-            onClick={() => setSearchTerm('')}
+            onClick={() => setParamByKey('searchTerm', '')}
             className="absolute top-1/2 -translate-y-1/2 right-1 flex items-center justify-center"
           >
             <IoCloseCircleOutline size={20} className="text-red-300" />
