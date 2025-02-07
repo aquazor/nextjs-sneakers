@@ -2,16 +2,28 @@ import { useState } from 'react';
 import { CiViewList } from 'react-icons/ci';
 import { IoCloseCircleOutline } from 'react-icons/io5';
 import { cn } from '@/lib/utils';
-import { useBrandStore } from '@/lib/store/filters/brands-store';
-import { BRANDS } from '@/lib/store/filters/constants';
+import { BRANDS } from '@/constants';
+import { useFilterParamsContext } from '@/context/filtersContext';
 
 export default function BrandsPanel() {
-  const { brands: selected, selectBrand, clearBrands } = useBrandStore();
-  const [value, setValue] = useState('');
+  const {
+    filterParams: { brands },
+    setParamByKey,
+  } = useFilterParamsContext();
 
-  const brands = BRANDS.filter((brand) =>
-    brand.toLowerCase().includes(value.toLowerCase())
+  const selected = brands.length ? brands.split(',') : [];
+  const [searchValue, setSearchValue] = useState('');
+  const filteredBrands = BRANDS.filter((brand) =>
+    brand.toLowerCase().includes(searchValue.toLowerCase())
   );
+
+  const selectBrand = (size: string) => {
+    const updatedSizes = selected.includes(size)
+      ? selected.filter((value) => value !== size)
+      : [...selected, size];
+
+    setParamByKey('brands', updatedSizes.join(','));
+  };
 
   return (
     <div className="mt-4">
@@ -19,9 +31,9 @@ export default function BrandsPanel() {
         <CiViewList size={24} className="shrink-0" />
         <div className="relative w-full">
           <div className="flex">
-            {value.length > 0 && (
+            {searchValue.length > 0 && (
               <button
-                onClick={() => setValue('')}
+                onClick={() => setSearchValue('')}
                 className="flex items-center justify-center"
               >
                 <IoCloseCircleOutline size={20} className="text-red-300" />
@@ -29,8 +41,8 @@ export default function BrandsPanel() {
             )}
 
             <input
-              onChange={(e) => setValue(e.target.value)}
-              value={value}
+              onChange={(e) => setSearchValue(e.target.value)}
+              value={searchValue}
               autoComplete="off"
               id="searchBrands"
               name="searchBrands"
@@ -48,7 +60,7 @@ export default function BrandsPanel() {
                   <span className="text-base text-foreground">{selected.length}</span>
                 </span>
                 <button
-                  onClick={clearBrands}
+                  onClick={() => setParamByKey('brands', '')}
                   className="flex items-center justify-center"
                 >
                   <IoCloseCircleOutline size={20} className="text-red-300" />
@@ -61,7 +73,7 @@ export default function BrandsPanel() {
 
       <div className="mt-1 ml-7">
         <ul className="overflow-auto scrollbar-thin h-[calc(1.75rem*5)] p-1 scroll-contain">
-          {brands.map((brand) => {
+          {filteredBrands.map((brand) => {
             const isSelected = selected.some((value) => value === brand);
 
             return (
