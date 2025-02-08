@@ -1,9 +1,9 @@
-import { fetchProducts } from '@/lib/api/products';
-import { LIMIT_STR } from '@/constants';
 import { UrlFilterParams } from '@/constants/types';
+import { LIMIT_STR } from '@/constants';
+import { fetchProducts } from '@/lib/api/products';
 import FilterProviders from './FilterProviders';
-import ProductsList from './components/ProductsList';
 import Filters from './components/Filters';
+import ProductsList from './components/ProductsList';
 
 export default async function Home({
   searchParams,
