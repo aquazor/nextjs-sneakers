@@ -10,7 +10,7 @@ export default function Appbar() {
 
   return (
     <header className="border-b border-neutral-500">
-      <div className="px-8">
+      <div className="px-4">
         <div className="flex items-center justify-between py-2">
           {status === 'loading' ? (
             <>

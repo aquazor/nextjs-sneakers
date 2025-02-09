@@ -1,9 +1,9 @@
 import { UrlFilterParams } from '@/constants/types';
 import { LIMIT_STR } from '@/constants';
-import { fetchProducts } from '@/lib/api/products';
+import { fetchItems } from '@/lib/api/sneakers';
 import FilterProviders from './FilterProviders';
 import Filters from './components/Filters';
-import ProductsList from './components/ProductsList';
+import ItemsList from './components/ItemsList';
 
 export default async function Home({
   searchParams,
@@ -12,7 +12,7 @@ export default async function Home({
 }) {
   const { searchTerm, brands, sizes, minPrice, maxPrice, sort } = await searchParams;
 
-  const { products, hasMore } = await fetchProducts({
+  const { items, hasMore } = await fetchItems({
     searchTerm,
     brands,
     sizes,
@@ -28,7 +28,7 @@ export default async function Home({
       <div className="flex lg:gap-2">
         <FilterProviders>
           <Filters />
-          <ProductsList data={products} hasMore={hasMore} />
+          <ItemsList data={items} hasMore={hasMore} />
         </FilterProviders>
       </div>
     </div>

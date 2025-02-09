@@ -67,14 +67,14 @@ export async function GET(req: Request) {
       }
     });
 
-    const products: IProduct[] = await Product.find(query)
+    const items: IProduct[] = await Product.find(query)
       .skip(skip)
       .limit(limit)
       .sort(sort);
     const totalCount = await Product.countDocuments(query);
 
     return NextResponse.json({
-      products,
+      items,
       hasMore: skip + limit < totalCount,
     });
   } catch (err) {

@@ -1,4 +1,4 @@
-export default function ProductsLoading() {
+export default function ItemsLoading() {
   return (
     <div className="p-4 max-w-[112.5rem] mx-auto">
       <div className="flex lg:gap-2">
