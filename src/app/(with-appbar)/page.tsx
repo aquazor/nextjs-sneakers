@@ -2,6 +2,7 @@ import { UrlFilterParams } from '@/constants/types';
 import { LIMIT_STR } from '@/constants';
 import { fetchItems } from '@/lib/api/sneakers';
 import FilterProviders from './FilterProviders';
+import Container from '@/components/Container';
 import Filters from './components/Filters';
 import ItemsList from './components/ItemsList';
 
@@ -24,13 +25,13 @@ export default async function Home({
   });
 
   return (
-    <div className="p-4 max-w-[112.5rem] mx-auto">
+    <Container>
       <div className="flex lg:gap-2">
         <FilterProviders>
           <Filters />
           <ItemsList data={items} hasMore={hasMore} />
         </FilterProviders>
       </div>
-    </div>
+    </Container>
   );
 }

@@ -1,4 +1,5 @@
 import { fetchItemById } from '@/lib/api/sneakers';
+import Container from '@/components/Container';
 import Swiper from './components/Swiper';
 import ItemInfo from './components/ItemInfo';
 import ItemDescription from './components/ItemDescription';
@@ -12,7 +13,7 @@ export default async function ItemPage({
   const { item } = await fetchItemById({ itemId });
 
   return (
-    <div className="p-4 max-w-[112.5rem] mx-auto">
+    <Container>
       <div className="grid grid-cols-1 md:grid-cols-[auto,1fr] md:grid-rows-[auto,1fr] gap-6">
         <h2 className="block md:hidden text-4xl first-letter:text-5xl text-balance first-letter:font-bold">
           {item.name}
@@ -30,6 +31,6 @@ export default async function ItemPage({
           <ItemDescription />
         </div>
       </div>
-    </div>
+    </Container>
   );
 }

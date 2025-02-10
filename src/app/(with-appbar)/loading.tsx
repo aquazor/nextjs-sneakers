@@ -1,6 +1,8 @@
+import Container from '@/components/Container';
+
 export default function ItemsLoading() {
   return (
-    <div className="p-4 max-w-[112.5rem] mx-auto">
+    <Container>
       <div className="flex lg:gap-2">
         <div className="absolute lg:static z-50 lg:mt-2 lg:ml-2 bg-background shadow-xl w-72 shrink-0 h-fit">
           <div className="block lg:hidden w-full h-8 bg-primary/10 animate-pulse-fast" />
@@ -71,6 +73,6 @@ export default function ItemsLoading() {
           ))}
         </div>
       </div>
-    </div>
+    </Container>
   );
 }
