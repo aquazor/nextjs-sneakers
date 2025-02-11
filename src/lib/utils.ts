@@ -15,3 +15,25 @@ export function parsePrice(price: string | null, defaultPrice: number): string {
     ? defaultPrice.toString()
     : parsedPrice.toString();
 }
+
+export function getLocalStorage<T>(key: string) {
+  if (typeof window === 'undefined') {
+    return;
+  }
+
+  const value = localStorage.getItem(key);
+
+  if (value === null) {
+    return null;
+  }
+
+  return JSON.parse(value) as T;
+}
+
+export function setLocalStorage<T>(key: string, value: T) {
+  if (typeof window === 'undefined') {
+    return;
+  }
+
+  localStorage.setItem(key, JSON.stringify(value));
+}
