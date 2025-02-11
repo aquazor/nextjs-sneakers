@@ -1,12 +1,18 @@
 import mongoose from 'mongoose';
 
+export interface IProductSize {
+  count: number;
+  value: string;
+  code: string;
+}
+
 export interface IProduct extends Document {
   _id: string;
   name: string;
   price: number;
   url: string;
   code: string;
-  sizes: { _id: string; count: number; value: string; code: string }[];
+  sizes: IProductSize[];
 }
 
 const SizeSchema = new mongoose.Schema({
