@@ -1,86 +1,160 @@
 import { createContext, useCallback, useContext, useEffect, useState } from 'react';
-import { IProduct, IProductSize } from '@/lib/mongoose/models/ItemSchema';
+import { useSession } from 'next-auth/react';
 import { getLocalStorage, setLocalStorage } from '@/lib/utils';
-
-export interface CartItem extends IProduct {
-  count: number;
-  size: IProductSize;
-}
+import { ICartItem } from '@/types/cart';
+import { cartApi } from '@/lib/api/cart';
 
 export interface CartState {
   count: number;
-  cartItems: CartItem[];
-  addCartItem: (item: CartItem) => void;
-  removeCartItem: (code: CartItem['code']) => void;
-  incCount: (code: CartItem['code']) => void;
-  decCount: (code: CartItem['code']) => void;
+  cartItems: ICartItem[];
+  addCartItem: (item: ICartItem) => Promise<void>;
+  removeOrDeleteCartItem: ({
+    itemId,
+    code,
+  }: {
+    itemId: ICartItem['itemId'];
+    code: ICartItem['code'];
+  }) => Promise<void>;
+  deleteCartItem: ({
+    itemId,
+    code,
+  }: {
+    itemId: ICartItem['itemId'];
+    code: ICartItem['code'];
+  }) => Promise<void>;
 }
 
 const Context = createContext<CartState>({
   count: 0,
   cartItems: [],
-  addCartItem: () => {},
-  removeCartItem: () => {},
-  incCount: () => {},
-  decCount: () => {},
+  addCartItem: async () => {},
+  removeOrDeleteCartItem: async () => {},
+  deleteCartItem: async () => {},
 });
 
 export default function CartProvider({ children }: { children: React.ReactNode }) {
+  const { status } = useSession();
   const [cartItems, setCartItems] = useState<CartState['cartItems']>([]);
   const count = cartItems.length;
 
   useEffect(() => {
-    const cartItems = getLocalStorage<CartState['cartItems']>('cart') || [];
-    setCartItems(cartItems);
-  }, []);
+    const fetchItems = async () => {
+      if (status === 'authenticated') {
+        const items = await cartApi.getItems();
+        setCartItems(items);
+        setLocalStorage('cart', items);
+      } else {
+        const cartItems = getLocalStorage<CartState['cartItems']>('cart') || [];
+        setCartItems(cartItems);
+      }
+    };
 
-  const addCartItem = useCallback((newItem: CartItem) => {
-    const cartItems = getLocalStorage<CartState['cartItems']>('cart') || [];
-    const newCrtItems = [...cartItems, newItem];
+    fetchItems();
+  }, [status]);
 
-    setLocalStorage('cart', newCrtItems);
-    setCartItems(newCrtItems);
-  }, []);
+  const addCartItem = useCallback(
+    async (item: ICartItem) => {
+      const cartItems = getLocalStorage<CartState['cartItems']>('cart') || [];
+      const itemIndex = cartItems.findIndex(
+        (cartItem) =>
+          cartItem.itemId === item.itemId && cartItem.size.code === item.size.code
+      );
 
-  const removeCartItem = useCallback((code: CartItem['code']) => {
-    const cartItems = getLocalStorage<CartState['cartItems']>('cart') || [];
-    const newCrtItems = cartItems.filter((item) => item.size.code !== code);
+      let newCartItems = cartItems;
+      if (itemIndex > -1) {
+        newCartItems[itemIndex] = { ...item, count: item.count + 1 };
+      } else {
+        newCartItems = [...cartItems, item];
+      }
 
-    setLocalStorage('cart', newCrtItems);
-    setCartItems(newCrtItems);
-  }, []);
+      setLocalStorage('cart', newCartItems);
 
-  const incCount = useCallback((code: CartItem['code']) => {
-    const cartItems = getLocalStorage<CartState['cartItems']>('cart') || [];
-    const index = cartItems.findIndex((item) => item.size.code === code);
+      if (status === 'authenticated') {
+        await cartApi.addItem({ item });
+      }
 
-    if (index === -1) return;
+      setCartItems(newCartItems);
+    },
+    [status]
+  );
 
-    const item = cartItems[index];
-    cartItems[index] = { ...item, count: item.count + 1 };
-    const updatedItems = [...cartItems];
+  const removeOrDeleteCartItem = useCallback(
+    async ({
+      itemId,
+      code,
+    }: {
+      itemId: ICartItem['itemId'];
+      code: ICartItem['code'];
+    }) => {
+      const cartItems = getLocalStorage<CartState['cartItems']>('cart') || [];
+      const itemIndex = cartItems.findIndex(
+        (cartItem) => cartItem.itemId === itemId && cartItem.size.code === code
+      );
 
-    setLocalStorage('cart', updatedItems);
-    setCartItems(updatedItems);
-  }, []);
+      const item = cartItems[itemIndex];
+      let newCartItems = cartItems;
+      if (itemIndex > -1) {
+        if (newCartItems[itemIndex].count > 1) {
+          newCartItems[itemIndex] = { ...item, count: item.count - 1 };
+        } else {
+          newCartItems = newCartItems.filter(
+            (cartItem) =>
+              !(cartItem.itemId === item.itemId && cartItem.size.code === item.size.code)
+          );
+        }
+      }
 
-  const decCount = useCallback((code: CartItem['code']) => {
-    const cartItems = getLocalStorage<CartState['cartItems']>('cart') || [];
-    const index = cartItems.findIndex((item) => item.size.code === code);
+      setLocalStorage('cart', newCartItems);
 
-    if (index === -1) return;
+      if (status === 'authenticated') {
+        await cartApi.removeOrDeleteItem({
+          itemId,
+          code,
+        });
+      }
 
-    const item = cartItems[index];
-    cartItems[index] = { ...item, count: item.count - 1 };
-    const updatedItems = [...cartItems];
+      setCartItems(newCartItems);
+    },
+    [status]
+  );
 
-    setLocalStorage('cart', updatedItems);
-    setCartItems(updatedItems);
-  }, []);
+  const deleteCartItem = useCallback(
+    async ({
+      itemId,
+      code,
+    }: {
+      itemId: ICartItem['itemId'];
+      code: ICartItem['code'];
+    }) => {
+      const cartItems = getLocalStorage<CartState['cartItems']>('cart') || [];
+      const itemIndex = cartItems.findIndex(
+        (cartItem) => cartItem.itemId === itemId && cartItem.size.code === code
+      );
+
+      let newCartItems = cartItems;
+      if (itemIndex > -1) {
+        newCartItems = newCartItems.filter(
+          (cartItem) => !(cartItem.itemId === itemId && cartItem.size.code === code)
+        );
+      }
+
+      setLocalStorage('cart', newCartItems);
+
+      if (status === 'authenticated') {
+        await cartApi.deleteItem({
+          itemId,
+          code,
+        });
+      }
+
+      setCartItems(newCartItems);
+    },
+    [status]
+  );
 
   return (
     <Context
-      value={{ count, cartItems, addCartItem, removeCartItem, incCount, decCount }}
+      value={{ count, cartItems, addCartItem, removeOrDeleteCartItem, deleteCartItem }}
     >
       {children}
     </Context>
