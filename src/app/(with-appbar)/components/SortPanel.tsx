@@ -1,11 +1,11 @@
 'use client';
 
-import { SortMethod } from '@/constants/types';
-import { useFilterParamsContext } from '@/context/filtersContext';
 import { FaCaretDown, FaCaretUp } from 'react-icons/fa';
 import { LiaSortSolid } from 'react-icons/lia';
+import { ISortMethod } from '@/types/filters';
+import { useFilterParamsContext } from '@/context/filtersContext';
 
-const OPTIONS: { value: SortMethod; name: string }[] = [
+const OPTIONS: { value: ISortMethod; name: string }[] = [
   { value: '', name: 'None' },
   { value: 'price:desc', name: 'Price: High to Low' },
   { value: 'price:asc', name: 'Price: Low to High' },
@@ -20,7 +20,7 @@ export default function SortPanel() {
   } = useFilterParamsContext();
 
   const setSort = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const value = e.target.value as SortMethod;
+    const value = e.target.value as ISortMethod;
     setParamByKey('sort', value);
   };
 

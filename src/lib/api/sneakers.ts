@@ -1,6 +1,6 @@
-import { IProduct } from '../mongoose/models/ItemSchema';
 import { MAX_PRICE, MIN_PRICE } from '@/constants';
-import { UrlFilterParams } from '@/constants/types';
+import { UrlFilterParams } from '@/types/filters';
+import { IProduct } from '@/types/product';
 
 export async function fetchItems(
   { skip, limit, searchTerm, brands, sizes, minPrice, maxPrice, sort }: UrlFilterParams,

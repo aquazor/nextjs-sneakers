@@ -1,14 +1,15 @@
 import { MongooseError } from 'mongoose';
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { LIMIT_STR, MIN_PRICE_STR, MAX_PRICE_STR } from '@/constants';
+import { IProduct } from '@/types/product';
 import dbConnect from '@/lib/mongoose/dbConnect';
-import Product, { IProduct } from '@/lib/mongoose/models/ItemSchema';
+import Product from '@/lib/mongoose/models/ItemSchema';
 
-export async function GET(req: Request) {
+export async function GET(req: NextRequest) {
   await dbConnect();
 
   try {
-    const { searchParams } = new URL(req.url);
+    const { searchParams } = req.nextUrl;
 
     const limit = parseInt(searchParams.get('limit') || LIMIT_STR, 10);
     const skip = parseInt(searchParams.get('skip') || '0', 10);
@@ -83,6 +84,6 @@ export async function GET(req: Request) {
       return NextResponse.json({ message: err.message }, { status: 500 });
     }
 
-    return NextResponse.json({ message: 'Something went wrong.' }, { status: 500 });
+    return NextResponse.json({ message: 'Something went wrong' }, { status: 500 });
   }
 }

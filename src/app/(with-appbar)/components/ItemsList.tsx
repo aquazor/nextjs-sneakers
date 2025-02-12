@@ -1,16 +1,16 @@
 'use client';
 
-import Image from 'next/image';
 import { useEffect, useState } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
-import { IProduct } from '@/lib/mongoose/models/ItemSchema';
+import { IoHeartOutline } from 'react-icons/io5';
+import { IProduct } from '@/types/product';
 import { fetchItems } from '@/lib/api/sneakers';
 import { LIMIT_STR } from '@/constants';
 import { useFilterParamsContext } from '@/context/filtersContext';
-import LoadMoreButton from './LoadMoreButton';
 import { useFavoritesContext } from '@/context/favoritesContext';
-import { IoHeartOutline } from 'react-icons/io5';
 import { cn } from '@/lib/utils';
+import LoadMoreButton from './LoadMoreButton';
 
 interface ItemsListProps {
   data: IProduct[];

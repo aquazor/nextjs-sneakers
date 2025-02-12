@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useState } from 'react';
-import { IProduct } from '@/lib/mongoose/models/ItemSchema';
 import { getLocalStorage, setLocalStorage } from '@/lib/utils';
+import { IProduct } from '@/types/product';
 
 export interface FavoritesState {
   count: number;

@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server';
 import { MongooseError } from 'mongoose';
+import { IProduct } from '@/types/product';
 import dbConnect from '@/lib/mongoose/dbConnect';
-import Product, { IProduct } from '@/lib/mongoose/models/ItemSchema';
+import Product from '@/lib/mongoose/models/ItemSchema';
 
 export async function GET(
   req: Request,
@@ -26,6 +27,6 @@ export async function GET(
       return NextResponse.json({ message: err.message }, { status: 500 });
     }
 
-    return NextResponse.json({ message: 'Something went wrong.' }, { status: 500 });
+    return NextResponse.json({ message: 'Something went wrong' }, { status: 500 });
   }
 }

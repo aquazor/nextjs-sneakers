@@ -1,10 +1,10 @@
-import { UrlFilterParams } from '@/constants/types';
 import { LIMIT_STR } from '@/constants';
 import { fetchItems } from '@/lib/api/sneakers';
-import FilterProviders from './FilterProviders';
+import { UrlFilterParams } from '@/types/filters';
 import Container from '@/components/Container';
 import Filters from './components/Filters';
 import ItemsList from './components/ItemsList';
+import FilterProviders from './FilterProviders';
 
 export default async function Home({
   searchParams,

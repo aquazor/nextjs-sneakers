@@ -8,16 +8,16 @@ import {
   MIN_PRICE_STR,
   SIZES,
 } from '../constants';
-import { FilterParamsState, SortMethod } from '@/constants/types';
 import { parsePrice } from '@/lib/utils';
+import { IFilterParamsState, ISortMethod } from '@/types/filters';
 
 interface Context {
-  filterParams: FilterParamsState;
-  setParamByKey: (key: keyof FilterParamsState, value: string) => void;
+  filterParams: IFilterParamsState;
+  setParamByKey: (key: keyof IFilterParamsState, value: string) => void;
   clearParams: () => void;
 }
 
-const initialParams: FilterParamsState = {
+const initialParams: IFilterParamsState = {
   searchTerm: '',
   minPrice: MIN_PRICE_STR,
   maxPrice: MAX_PRICE_STR,
@@ -40,7 +40,7 @@ export default function FilterParamsProvider({
   const router = useRouter();
   const params = useSearchParams();
 
-  const [filterParams, setFilters] = useState<FilterParamsState>(() => {
+  const [filterParams, setFilters] = useState<IFilterParamsState>(() => {
     const searchTerm = params.get('searchTerm') || '';
 
     const minPrice = parsePrice(params.get('minPrice'), MIN_PRICE);
@@ -52,12 +52,12 @@ export default function FilterParamsProvider({
     const sizesParam = params.get('sizes')?.split(',') || [];
     const sizes = sizesParam.filter((brand) => SIZES.includes(brand)).join(',');
 
-    const sort = (params.get('sort') as SortMethod) || '';
+    const sort = (params.get('sort') as ISortMethod) || '';
 
     return { searchTerm, minPrice, maxPrice, brands, sizes, sort };
   });
 
-  const setParamByKey = useCallback((key: keyof FilterParamsState, value: string) => {
+  const setParamByKey = useCallback((key: keyof IFilterParamsState, value: string) => {
     setFilters((prev) => ({ ...prev, [key]: value }));
   }, []);
 
