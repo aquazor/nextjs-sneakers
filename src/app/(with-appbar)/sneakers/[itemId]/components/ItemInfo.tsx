@@ -1,13 +1,15 @@
 'use client';
 
+import Link from 'next/link';
 import { useRef, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { IoBagCheckOutline } from 'react-icons/io5';
 import { TbHeart, TbHeartCheck } from 'react-icons/tb';
 import { BsCart, BsCartCheckFill } from 'react-icons/bs';
 import { GoChevronDown } from 'react-icons/go';
-import { IProduct } from '@/lib/mongoose/models/ItemSchema';
+import { v4 as uuid } from 'uuid';
 import { cn } from '@/lib/utils';
+import { IProduct } from '@/types/product';
 import { useFavoritesContext } from '@/context/favoritesContext';
 import { useCartContext } from '@/context/cartContext';
 import useClickOutside from '@/hooks/useClickOuside';
@@ -17,8 +19,10 @@ export default function ItemInfo({ item }: { item: IProduct }) {
   const params = useSearchParams();
   const sizeParam = params.get('size');
 
-  const { addCartItem, removeCartItem, cartItems } = useCartContext();
+  const { addCartItem, removeOrDeleteCartItem, cartItems } = useCartContext();
   const { addFavorite, removeFavorite, favorites } = useFavoritesContext();
+
+  const [isLoading, setIsLoading] = useState(false);
 
   const { sizes } = item;
   const size = sizes.find((size) => size.value === sizeParam);
@@ -26,7 +30,7 @@ export default function ItemInfo({ item }: { item: IProduct }) {
 
   const isInFavorites = favorites.some((favItem) => favItem._id === item._id);
   const isInCart = cartItems.some(
-    (cartItem) => cartItem._id === item._id && cartItem.size.code === size?.code
+    (cartItem) => cartItem.itemId === item._id && cartItem.size.code === size?.code
   );
 
   const [isOpen, setIsOpen] = useState(false);
@@ -40,9 +44,51 @@ export default function ItemInfo({ item }: { item: IProduct }) {
     if (!size) {
       return;
     }
-
     router.replace(`/sneakers/${item._id}?size=${size}`, { scroll: false });
     setIsOpen(false);
+  };
+
+  const handleToggleToCart = async () => {
+    if (!size) {
+      open();
+      return;
+    }
+
+    const { _id: itemId, name, price, url, code } = item;
+    const currentItem = {
+      _id: uuid(),
+      itemId,
+      count: 1,
+      maxCount: size.count,
+      size,
+      name,
+      price,
+      url,
+      code,
+    };
+
+    setIsLoading(true);
+
+    if (isInCart) {
+      await removeOrDeleteCartItem(currentItem);
+      setIsLoading(false);
+      return;
+    }
+
+    await addCartItem(currentItem);
+    setIsLoading(false);
+  };
+
+  const handleToggleToFavorites = async () => {
+    setIsLoading(true);
+
+    if (isInFavorites) {
+      await removeFavorite(item);
+      setIsLoading(false);
+      return;
+    }
+    await addFavorite(item);
+    setIsLoading(false);
   };
 
   return (
@@ -64,13 +110,8 @@ export default function ItemInfo({ item }: { item: IProduct }) {
       <div className="flex flex-col w-full gap-3">
         <div className="flex gap-3">
           <button
-            onClick={() => {
-              if (isInFavorites) {
-                removeFavorite(item);
-                return;
-              }
-              addFavorite(item);
-            }}
+            disabled={isLoading}
+            onClick={handleToggleToFavorites}
             className="flex p-1 items-center border border-border hover:border-primary"
           >
             {isInFavorites ? (
@@ -81,18 +122,8 @@ export default function ItemInfo({ item }: { item: IProduct }) {
           </button>
 
           <button
-            onClick={() => {
-              if (!size) {
-                open();
-                return;
-              }
-
-              if (isInCart) {
-                removeCartItem(code);
-                return;
-              }
-              addCartItem({ ...item, count: 1, size });
-            }}
+            disabled={isLoading}
+            onClick={handleToggleToCart}
             className={cn(
               'flex gap-2 p-1 items-center border border-border hover:border-primary',
               size?.value ? 'opacity-100' : 'opacity-50'
@@ -139,9 +170,12 @@ export default function ItemInfo({ item }: { item: IProduct }) {
           </div>
 
           <div className="flex justify-end">
-            <button className="px-3 py-2 flex items-center gap-1 transition-colors border border-primary bg-background text-foreground hover:bg-primary hover:text-primary-foreground font-bold text-lg">
+            <Link
+              href="/cart"
+              className="px-3 py-2 flex items-center gap-1 transition-colors border border-primary bg-background text-foreground hover:bg-primary hover:text-primary-foreground font-bold text-lg"
+            >
               Proceed to checkout <IoBagCheckOutline size={20} />
-            </button>
+            </Link>
           </div>
         </div>
       </div>
