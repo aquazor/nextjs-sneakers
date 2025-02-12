@@ -2,6 +2,7 @@ import NextAuth from 'next-auth';
 import GitHub from 'next-auth/providers/github';
 import Google from 'next-auth/providers/google';
 import { Provider } from 'next-auth/providers';
+import { userApi } from './lib/api/user';
 
 const providers: Provider[] = [
   GitHub,
@@ -31,6 +32,25 @@ export const providerMap = providers
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   providers,
+  callbacks: {
+    async signIn({ user, account }) {
+      if (!account) {
+        return false;
+      }
+
+      if (account.provider === 'google' || account.provider === 'github') {
+        const { email, name, image } = user;
+
+        await userApi.registerUser({
+          email: email ?? '',
+          name: name ?? '',
+          image: image ?? '',
+        });
+      }
+
+      return true;
+    },
+  },
   pages: {
     signIn: '/sign-in',
   },
