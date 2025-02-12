@@ -3,6 +3,15 @@ import mongoose from 'mongoose';
 const connection: { isConnected?: number } = {};
 
 export default async function dbConnect() {
+  if (process.env.NODE_ENV !== 'development') {
+    try {
+      await mongoose.connect(process.env.MONGO_URI!);
+    } catch (error) {
+      console.log('mongoDB connections error:', error);
+    }
+    return;
+  }
+
   if (connection.isConnected) {
     return;
   }
