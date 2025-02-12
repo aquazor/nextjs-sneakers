@@ -2,12 +2,16 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from './auth';
 
 const PUBLIC_ROUTES = ['/', '/sign-in', '/favorites', '/cart'];
+const PUBLIC_ROUTE_PREFIXES = ['/sneakers'];
 
 export default async function middleware(req: NextRequest) {
   const session = await auth();
   const { nextUrl } = req;
 
-  const isPublicRoute = PUBLIC_ROUTES.includes(nextUrl.pathname);
+  const isPublicRoute =
+    PUBLIC_ROUTES.includes(nextUrl.pathname) ||
+    PUBLIC_ROUTE_PREFIXES.some((prefix) => nextUrl.pathname.startsWith(prefix));
+
   const isAuthed = !!session?.user;
 
   if (isPublicRoute) {
