@@ -38,7 +38,7 @@ export const BaseItemSchema = new mongoose.Schema(
   { _id: false }
 );
 
-const ProductSchema = new mongoose.Schema({
+export const ProductSchema = new mongoose.Schema({
   ...BaseItemSchema.obj,
   sizes: [ItemSizeSchema],
 });

@@ -1,3 +1,12 @@
 import { IProduct } from './product';
+import { ISortMethod } from './filters';
 
-export type IFavorite = IProduct;
+export type FavoriteSortMethod = 'createdAt:asc' | 'createdAt:desc' | ISortMethod;
+
+export interface IFavoriteItem extends IProduct {
+  itemId: string;
+}
+
+export interface IFavoriteItemParams {
+  itemId: IFavoriteItem['itemId'];
+}

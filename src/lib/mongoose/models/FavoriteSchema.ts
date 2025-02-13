@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
-import { IFavorite } from '@/types/favorite';
-import { BaseItemSchema } from './ItemSchema';
+import { IFavoriteItem } from '@/types/favorite';
+import { ProductSchema } from './ItemSchema';
 
 const FavoriteItemSchema = new mongoose.Schema(
   {
@@ -10,7 +10,7 @@ const FavoriteItemSchema = new mongoose.Schema(
       required: true,
     },
 
-    ...BaseItemSchema.obj,
+    ...ProductSchema.obj,
   },
   { timestamps: { createdAt: true, updatedAt: false } }
 );
@@ -25,6 +25,6 @@ const FavoriteSchema = new mongoose.Schema({
 });
 
 const Favorite =
-  mongoose.models.Favorite || mongoose.model<IFavorite>('Favorite', FavoriteSchema);
+  mongoose.models.Favorite || mongoose.model<IFavoriteItem>('Favorite', FavoriteSchema);
 
 export default Favorite;
