@@ -1,32 +1,22 @@
 import { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
 import { getLocalStorage, setLocalStorage } from '@/lib/utils';
-import { ICartItem } from '@/types/cart';
+import { ICartItem, ICartItemParams } from '@/types/cart';
 import { cartApi } from '@/lib/api/cart';
 
 export interface CartState {
   count: number;
   cartItems: ICartItem[];
+  isLoading: boolean;
   addCartItem: (item: ICartItem) => Promise<void>;
-  removeOrDeleteCartItem: ({
-    itemId,
-    code,
-  }: {
-    itemId: ICartItem['itemId'];
-    code: ICartItem['code'];
-  }) => Promise<void>;
-  deleteCartItem: ({
-    itemId,
-    code,
-  }: {
-    itemId: ICartItem['itemId'];
-    code: ICartItem['code'];
-  }) => Promise<void>;
+  removeOrDeleteCartItem: ({ itemId, code }: ICartItemParams) => Promise<void>;
+  deleteCartItem: ({ itemId, code }: ICartItemParams) => Promise<void>;
 }
 
 const Context = createContext<CartState>({
   count: 0,
   cartItems: [],
+  isLoading: true,
   addCartItem: async () => {},
   removeOrDeleteCartItem: async () => {},
   deleteCartItem: async () => {},
@@ -34,11 +24,13 @@ const Context = createContext<CartState>({
 
 export default function CartProvider({ children }: { children: React.ReactNode }) {
   const { status } = useSession();
+  const [isLoading, setIsLoading] = useState(true);
   const [cartItems, setCartItems] = useState<CartState['cartItems']>([]);
-  const count = cartItems.length;
+  const count = cartItems.reduce((acc, item) => acc + item.count, 0);
 
   useEffect(() => {
     const fetchItems = async () => {
+      setIsLoading(true);
       if (status === 'authenticated') {
         const items = await cartApi.getItems();
         setCartItems(items);
@@ -47,6 +39,7 @@ export default function CartProvider({ children }: { children: React.ReactNode }
         const cartItems = getLocalStorage<CartState['cartItems']>('cart') || [];
         setCartItems(cartItems);
       }
+      setIsLoading(false);
     };
 
     fetchItems();
@@ -79,13 +72,7 @@ export default function CartProvider({ children }: { children: React.ReactNode }
   );
 
   const removeOrDeleteCartItem = useCallback(
-    async ({
-      itemId,
-      code,
-    }: {
-      itemId: ICartItem['itemId'];
-      code: ICartItem['code'];
-    }) => {
+    async ({ itemId, code }: ICartItemParams) => {
       const cartItems = getLocalStorage<CartState['cartItems']>('cart') || [];
       const itemIndex = cartItems.findIndex(
         (cartItem) => cartItem.itemId === itemId && cartItem.size.code === code
@@ -98,8 +85,7 @@ export default function CartProvider({ children }: { children: React.ReactNode }
           newCartItems[itemIndex] = { ...item, count: item.count - 1 };
         } else {
           newCartItems = newCartItems.filter(
-            (cartItem) =>
-              !(cartItem.itemId === item.itemId && cartItem.size.code === item.size.code)
+            (cartItem) => !(cartItem.itemId === itemId && cartItem.size.code === code)
           );
         }
       }
@@ -119,13 +105,7 @@ export default function CartProvider({ children }: { children: React.ReactNode }
   );
 
   const deleteCartItem = useCallback(
-    async ({
-      itemId,
-      code,
-    }: {
-      itemId: ICartItem['itemId'];
-      code: ICartItem['code'];
-    }) => {
+    async ({ itemId, code }: ICartItemParams) => {
       const cartItems = getLocalStorage<CartState['cartItems']>('cart') || [];
       const itemIndex = cartItems.findIndex(
         (cartItem) => cartItem.itemId === itemId && cartItem.size.code === code
@@ -154,7 +134,14 @@ export default function CartProvider({ children }: { children: React.ReactNode }
 
   return (
     <Context
-      value={{ count, cartItems, addCartItem, removeOrDeleteCartItem, deleteCartItem }}
+      value={{
+        count,
+        cartItems,
+        isLoading,
+        addCartItem,
+        removeOrDeleteCartItem,
+        deleteCartItem,
+      }}
     >
       {children}
     </Context>

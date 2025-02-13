@@ -3,7 +3,7 @@ import dbConnect from '@/lib/mongoose/dbConnect';
 import Cart from '@/lib/mongoose/models/CartSchema';
 import User from '@/lib/mongoose/models/UserSchema';
 import { auth } from '@/auth';
-import { ICartItem } from '@/types/cart';
+import { ICartItem, ICartItemParams } from '@/types/cart';
 
 export async function POST(req: NextRequest) {
   await dbConnect();
@@ -14,13 +14,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const {
-      itemId,
-      code,
-    }: {
-      itemId: ICartItem['itemId'];
-      code: ICartItem['code'];
-    } = await req.json();
+    const { itemId, code }: ICartItemParams = await req.json();
 
     const user = await User.findOne({ email: session.user.email });
     if (!user) {
@@ -47,7 +41,7 @@ export async function POST(req: NextRequest) {
     await cart.save();
 
     return NextResponse.json(
-      { message: 'Item deleted from cart.', cart },
+      { message: 'Item deleted from cart', items: cart.items },
       { status: 201 }
     );
   } catch (error) {

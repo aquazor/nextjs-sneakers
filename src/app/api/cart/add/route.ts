@@ -46,7 +46,10 @@ export async function POST(req: NextRequest) {
 
     await cart.save();
 
-    return NextResponse.json({ message: 'Item added to cart.', cart }, { status: 201 });
+    return NextResponse.json(
+      { message: 'Item added to cart', items: cart.items },
+      { status: 201 }
+    );
   } catch (error) {
     console.error(error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });

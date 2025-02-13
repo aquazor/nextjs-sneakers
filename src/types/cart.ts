@@ -7,6 +7,11 @@ export interface ICartItem extends IBaseItem {
   size: IProductSize;
 }
 
+export interface ICartItemParams {
+  itemId: ICartItem['itemId'];
+  code: ICartItem['code'];
+}
+
 export interface ICart {
   userId: string;
   items: ICartItem[];

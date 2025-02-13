@@ -1,4 +1,4 @@
-import { ICartItem } from '@/types/cart';
+import { ICartItem, ICartItemParams } from '@/types/cart';
 
 async function getItems(): Promise<ICartItem[]> {
   try {
@@ -23,13 +23,7 @@ async function addItem({ item }: { item: ICartItem }) {
   }
 }
 
-async function removeOrDeleteItem({
-  itemId,
-  code,
-}: {
-  itemId: ICartItem['itemId'];
-  code: ICartItem['code'];
-}) {
+async function removeOrDeleteItem({ itemId, code }: ICartItemParams) {
   try {
     await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/cart/remove`, {
       method: 'POST',
@@ -44,13 +38,7 @@ async function removeOrDeleteItem({
   }
 }
 
-async function deleteItem({
-  itemId,
-  code,
-}: {
-  itemId: ICartItem['itemId'];
-  code: ICartItem['code'];
-}) {
+async function deleteItem({ itemId, code }: ICartItemParams) {
   try {
     await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/cart/delete`, {
       method: 'POST',
