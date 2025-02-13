@@ -5,6 +5,7 @@ export type FavoriteSortMethod = 'createdAt:asc' | 'createdAt:desc' | ISortMetho
 
 export interface IFavoriteItem extends IProduct {
   itemId: string;
+  createdAt: Date;
 }
 
 export interface IFavoriteItemParams {

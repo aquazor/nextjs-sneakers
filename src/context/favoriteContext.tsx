@@ -31,6 +31,21 @@ const Context = createContext<FavoriteState>({
   clearParams: () => {},
 });
 
+const sortMethods: Record<
+  FavoriteSortMethod,
+  (a: IFavoriteItem, b: IFavoriteItem) => number
+> = {
+  'createdAt:asc': (a, b) =>
+    new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
+  'createdAt:desc': (a, b) =>
+    new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+  'price:asc': (a, b) => a.price - b.price,
+  'price:desc': (a, b) => b.price - a.price,
+  'name:asc': (a, b) => a.name.localeCompare(b.name),
+  'name:desc': (a, b) => b.name.localeCompare(a.name),
+  '': () => 0,
+};
+
 export default function FavoriteProvider({ children }: { children: React.ReactNode }) {
   const { status } = useSession();
   const searchParams = useSearchParams();
@@ -44,18 +59,22 @@ export default function FavoriteProvider({ children }: { children: React.ReactNo
 
   useEffect(() => {
     const fetchItems = async () => {
+      const { sort } = filterParams;
+
       if (status === 'authenticated') {
-        const items = await favoriteApi.getItems({ sort: filterParams.sort });
+        const items = await favoriteApi.getItems({ sort });
         setFavoriteItems(items);
         setLocalStorage('favorite', items);
       } else {
         const favorite = getLocalStorage<IFavoriteItem[]>('favorite') || [];
+        favorite.sort(sortMethods[sort]);
+
         setFavoriteItems(favorite);
       }
     };
 
     fetchItems();
-  }, [status, filterParams.sort]);
+  }, [status, filterParams]);
 
   const addFavorite = useCallback(
     async (item: IFavoriteItem) => {

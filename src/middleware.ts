@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from './auth';
 
-const PUBLIC_ROUTES = ['/', '/sign-in', '/favorites', '/cart'];
+const PUBLIC_ROUTES = ['/', '/sign-in', '/favorite', '/cart'];
 const PUBLIC_ROUTE_PREFIXES = ['/sneakers'];
 
 export default async function middleware(req: NextRequest) {
