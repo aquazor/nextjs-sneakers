@@ -1,6 +1,6 @@
-export type ISortMethod = 'price:asc' | 'price:desc' | 'name:asc' | 'nameDesc' | '';
+export type ISortMethod = 'price:asc' | 'price:desc' | 'name:asc' | 'name:desc' | '';
 
-export interface IFilterParamsState {
+export interface IFilterParams {
   searchTerm: string;
   minPrice: string;
   maxPrice: string;
@@ -9,7 +9,7 @@ export interface IFilterParamsState {
   sort: ISortMethod;
 }
 
-export interface UrlFilterParams extends Partial<IFilterParamsState> {
+export interface UrlFilterParams extends Partial<IFilterParams> {
   skip?: string;
   limit?: string;
 }

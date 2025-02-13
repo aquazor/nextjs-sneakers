@@ -10,7 +10,7 @@ import { GoChevronDown } from 'react-icons/go';
 import { v4 as uuid } from 'uuid';
 import { cn } from '@/lib/utils';
 import { IProduct } from '@/types/product';
-import { useFavoritesContext } from '@/context/favoritesContext';
+import { useFavoriteContext } from '@/context/favoriteContext';
 import { useCartContext } from '@/context/cartContext';
 import useClickOutside from '@/hooks/useClickOuside';
 
@@ -20,7 +20,7 @@ export default function ItemInfo({ item }: { item: IProduct }) {
   const sizeParam = params.get('size');
 
   const { addCartItem, removeOrDeleteCartItem, cartItems } = useCartContext();
-  const { addFavorite, removeFavorite, favorites } = useFavoritesContext();
+  const { addFavorite, deleteFavorite, favoriteItems } = useFavoriteContext();
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -28,7 +28,7 @@ export default function ItemInfo({ item }: { item: IProduct }) {
   const size = sizes.find((size) => size.value === sizeParam);
   const code = sizes.find((sizeObj) => sizeObj.code === size?.code)?.code || item.code;
 
-  const isInFavorites = favorites.some((favItem) => favItem._id === item._id);
+  const itemInFavorite = favoriteItems.find((favItem) => favItem.itemId === item._id);
   const isInCart = cartItems.some(
     (cartItem) => cartItem.itemId === item._id && cartItem.size.code === size?.code
   );
@@ -49,28 +49,27 @@ export default function ItemInfo({ item }: { item: IProduct }) {
   };
 
   const handleToggleToCart = async () => {
-    if (!size) {
+    if (!size || !size.value || size.count === 0) {
       open();
       return;
     }
 
-    const { _id: itemId, name, price, url, code } = item;
     const currentItem = {
       _id: uuid(),
-      itemId,
+      itemId: item._id,
+      code,
+      size,
       count: 1,
       maxCount: size.count,
-      size,
-      name,
-      price,
-      url,
-      code,
+      name: item.name,
+      price: item.price,
+      url: item.url,
     };
 
     setIsLoading(true);
 
     if (isInCart) {
-      await removeOrDeleteCartItem(currentItem);
+      await removeOrDeleteCartItem({ itemId: currentItem.itemId, code });
       setIsLoading(false);
       return;
     }
@@ -82,12 +81,20 @@ export default function ItemInfo({ item }: { item: IProduct }) {
   const handleToggleToFavorites = async () => {
     setIsLoading(true);
 
-    if (isInFavorites) {
-      await removeFavorite(item);
+    if (itemInFavorite) {
+      await deleteFavorite({ itemId: itemInFavorite.itemId });
       setIsLoading(false);
       return;
     }
-    await addFavorite(item);
+
+    const { _id: itemId, ...rest } = item;
+    const currentItem = {
+      _id: uuid(),
+      itemId,
+      ...rest,
+    };
+
+    await addFavorite(currentItem);
     setIsLoading(false);
   };
 
@@ -114,7 +121,7 @@ export default function ItemInfo({ item }: { item: IProduct }) {
             onClick={handleToggleToFavorites}
             className="flex p-1 items-center border border-border hover:border-primary"
           >
-            {isInFavorites ? (
+            {itemInFavorite ? (
               <TbHeartCheck size={36} className="[&_path]:fill-pink-300" />
             ) : (
               <TbHeart size={36} />
@@ -126,7 +133,7 @@ export default function ItemInfo({ item }: { item: IProduct }) {
             onClick={handleToggleToCart}
             className={cn(
               'flex gap-2 p-1 items-center border border-border hover:border-primary',
-              size?.value ? 'opacity-100' : 'opacity-50'
+              !size?.value || size?.count === 0 ? 'opacity-50' : 'opacity-100'
             )}
           >
             {isInCart ? (

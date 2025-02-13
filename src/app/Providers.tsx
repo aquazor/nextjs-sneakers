@@ -1,12 +1,12 @@
 'use client';
 
 import CartProvider from '@/context/cartContext';
-import FavoritesProvider from '@/context/favoritesContext';
+import FavoriteProvider from '@/context/favoriteContext';
 
 export default function Providers({ children }: { children: React.ReactNode }) {
   return (
     <CartProvider>
-      <FavoritesProvider>{children}</FavoritesProvider>
+      <FavoriteProvider>{children}</FavoriteProvider>
     </CartProvider>
   );
 }

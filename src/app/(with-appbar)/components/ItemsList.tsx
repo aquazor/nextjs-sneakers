@@ -3,13 +3,13 @@
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { IoHeartOutline } from 'react-icons/io5';
+import { v4 as uuid } from 'uuid';
+import { TbHeartCheck, TbHeart } from 'react-icons/tb';
 import { IProduct } from '@/types/product';
 import { fetchItems } from '@/lib/api/sneakers';
 import { LIMIT_STR } from '@/constants';
 import { useFilterParamsContext } from '@/context/filtersContext';
-import { useFavoritesContext } from '@/context/favoritesContext';
-import { cn } from '@/lib/utils';
+import { useFavoriteContext } from '@/context/favoriteContext';
 import LoadMoreButton from './LoadMoreButton';
 
 interface ItemsListProps {
@@ -19,7 +19,7 @@ interface ItemsListProps {
 
 export default function ItemsList({ data, hasMore }: ItemsListProps) {
   const { filterParams } = useFilterParamsContext();
-  const { addFavorite, removeFavorite, favorites } = useFavoritesContext();
+  const { addFavorite, deleteFavorite, favoriteItems } = useFavoriteContext();
 
   const [items, setItems] = useState(data || []);
   const [moreAvailable, setMoreAvailable] = useState(hasMore);
@@ -60,7 +60,9 @@ export default function ItemsList({ data, hasMore }: ItemsListProps) {
       {items.length && (
         <ul className="flex flex-wrap justify-center min-[550px]:justify-start">
           {items.map((item) => {
-            const isInFavorites = favorites.some((favItem) => favItem._id === item._id);
+            const itemInFavorite = favoriteItems.find(
+              (favItem) => favItem.itemId === item._id
+            );
 
             return (
               <li
@@ -83,7 +85,10 @@ export default function ItemsList({ data, hasMore }: ItemsListProps) {
 
                   <div className="flex justify-between items-center gap-2 p-2 my-auto">
                     <div>
-                      <h4 className="text-balance text-lg" title={item.name}>
+                      <h4
+                        className="text-balance text-lg leading-6 mb-2"
+                        title={item.name}
+                      >
                         {item.name}
                       </h4>
                       <p className="text-sm">
@@ -93,22 +98,27 @@ export default function ItemsList({ data, hasMore }: ItemsListProps) {
 
                     <div>
                       <button
-                        onClick={() => {
-                          if (isInFavorites) {
-                            removeFavorite(item);
+                        onClick={async () => {
+                          const { _id: itemId, ...rest } = item;
+                          const currentItem = {
+                            _id: uuid(),
+                            itemId,
+                            ...rest,
+                          };
+
+                          if (itemInFavorite) {
+                            await deleteFavorite({ itemId });
                             return;
                           }
-                          addFavorite(item);
+                          await addFavorite(currentItem);
                         }}
-                        className="flex p-0.5 items-center group"
+                        className="flex p-1 items-center border border-transparent transition-colors hover:border-primary"
                       >
-                        <IoHeartOutline
-                          size={30}
-                          className={cn(
-                            'relative group-hover:[&_path]:fill-pink-300',
-                            isInFavorites && '[&_path]:fill-pink-300 group-hover:'
-                          )}
-                        />
+                        {itemInFavorite ? (
+                          <TbHeartCheck size={30} className="[&_path]:fill-pink-300" />
+                        ) : (
+                          <TbHeart size={30} />
+                        )}
                       </button>
                     </div>
                   </div>

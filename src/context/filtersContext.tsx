@@ -9,15 +9,15 @@ import {
   SIZES,
 } from '../constants';
 import { parsePrice } from '@/lib/utils';
-import { IFilterParamsState, ISortMethod } from '@/types/filters';
+import { IFilterParams, ISortMethod } from '@/types/filters';
 
-interface Context {
-  filterParams: IFilterParamsState;
-  setParamByKey: (key: keyof IFilterParamsState, value: string) => void;
+interface IFilterState {
+  filterParams: IFilterParams;
+  setParamByKey: (key: keyof IFilterParams, value: string) => void;
   clearParams: () => void;
 }
 
-const initialParams: IFilterParamsState = {
+const initialParams: IFilterParams = {
   searchTerm: '',
   minPrice: MIN_PRICE_STR,
   maxPrice: MAX_PRICE_STR,
@@ -26,7 +26,7 @@ const initialParams: IFilterParamsState = {
   sort: '',
 };
 
-const Context = createContext<Context>({
+const Context = createContext<IFilterState>({
   filterParams: { ...initialParams },
   setParamByKey: () => {},
   clearParams: () => {},
@@ -40,7 +40,7 @@ export default function FilterParamsProvider({
   const router = useRouter();
   const params = useSearchParams();
 
-  const [filterParams, setFilters] = useState<IFilterParamsState>(() => {
+  const [filterParams, setFilterParams] = useState<IFilterState['filterParams']>(() => {
     const searchTerm = params.get('searchTerm') || '';
 
     const minPrice = parsePrice(params.get('minPrice'), MIN_PRICE);
@@ -57,12 +57,12 @@ export default function FilterParamsProvider({
     return { searchTerm, minPrice, maxPrice, brands, sizes, sort };
   });
 
-  const setParamByKey = useCallback((key: keyof IFilterParamsState, value: string) => {
-    setFilters((prev) => ({ ...prev, [key]: value }));
+  const setParamByKey = useCallback((key: keyof IFilterParams, value: string) => {
+    setFilterParams((prev) => ({ ...prev, [key]: value }));
   }, []);
 
   const clearParams = useCallback(() => {
-    setFilters({ ...initialParams });
+    setFilterParams({ ...initialParams });
   }, []);
 
   useEffect(() => {
