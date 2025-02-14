@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import Link from 'next/link';
 import { useState } from 'react';
 import { IoAdd, IoRemove } from 'react-icons/io5';
 import { RxCross1 } from 'react-icons/rx';
@@ -6,7 +7,6 @@ import { CiSquareRemove } from 'react-icons/ci';
 import { ICartItem } from '@/types/cart';
 import { cn } from '@/lib/utils';
 import { CartState } from '@/context/cartContext';
-import Link from 'next/link';
 
 interface Props {
   item: ICartItem;

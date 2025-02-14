@@ -1,11 +1,11 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { MongooseError } from 'mongoose';
 import { IProduct } from '@/types/product';
 import dbConnect from '@/lib/mongoose/dbConnect';
 import Product from '@/lib/mongoose/models/ItemSchema';
 
 export async function GET(
-  req: Request,
+  _req: NextRequest,
   { params }: { params: Promise<{ itemId: string }> }
 ) {
   await dbConnect();

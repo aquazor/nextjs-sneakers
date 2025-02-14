@@ -1,14 +1,50 @@
+import { Metadata } from 'next';
 import { fetchItemById } from '@/lib/api/sneakers';
 import Container from '@/components/Container';
 import Swiper from './components/Swiper';
 import ItemInfo from './components/ItemInfo';
 import ItemDescription from './components/ItemDescription';
 
-export default async function ItemPage({
+interface Params {
+  itemId: string;
+}
+
+export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ itemId: string }>;
-}) {
+  params: Promise<Params>;
+}): Promise<Metadata> {
+  const { itemId } = await params;
+  const { item } = await fetchItemById({ itemId });
+
+  return {
+    title: `${item.name}`,
+    description: `Discover ${item.name} - premium sneakers available now. Shop exclusive styles at NextSneaks.`,
+    openGraph: {
+      title: `NextSneaks | ${item.name}`,
+      description: `Find ${item.name} and more at NextSneaks. Limited editions, hottest sneaker releases.`,
+      url: `https://yourwebsite.com/item/${itemId}`,
+      siteName: 'NextSneaks',
+      images: [
+        {
+          url: item.url,
+          width: 1200,
+          height: 630,
+          alt: item.name,
+        },
+      ],
+      type: 'article',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `NextSneaks | ${item.name}`,
+      description: `Get your hands on ${item.name} before it's gone! Shop now at NextSneaks.`,
+      images: [item.url],
+    },
+  };
+}
+
+export default async function Page({ params }: { params: Promise<Params> }) {
   const { itemId } = await params;
   const { item } = await fetchItemById({ itemId });
 

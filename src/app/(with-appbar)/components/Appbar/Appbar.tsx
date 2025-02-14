@@ -39,7 +39,7 @@ export default function Appbar() {
                   <li>
                     <Link href="/" className="flex items-center gap-2">
                       <Logo width={36} height={36} />
-                      <span className="font-bold text-lg">Nextjs-sneakers</span>
+                      <span className="font-bold text-lg">Next-Sneaks</span>
                     </Link>
                   </li>
                 </ul>

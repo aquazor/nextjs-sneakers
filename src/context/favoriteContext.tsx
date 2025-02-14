@@ -16,7 +16,6 @@ export interface FavoriteState {
   addFavorite: (item: IFavoriteItem) => Promise<void>;
   deleteFavorite: ({ itemId }: IFavoriteItemParams) => Promise<void>;
   setParamByKey: (key: keyof IFavoriteFilterParams, value: FavoriteSortMethod) => void;
-  clearParams: () => void;
 }
 
 const initialParams: IFavoriteFilterParams = { sort: '' };
@@ -28,7 +27,6 @@ const Context = createContext<FavoriteState>({
   addFavorite: async () => {},
   deleteFavorite: async () => {},
   setParamByKey: () => {},
-  clearParams: () => {},
 });
 
 const sortMethods: Record<
@@ -119,10 +117,6 @@ export default function FavoriteProvider({ children }: { children: React.ReactNo
     []
   );
 
-  const clearParams = useCallback(() => {
-    setFilterParams({ ...initialParams });
-  }, []);
-
   return (
     <Context
       value={{
@@ -132,7 +126,6 @@ export default function FavoriteProvider({ children }: { children: React.ReactNo
         deleteFavorite,
         filterParams,
         setParamByKey,
-        clearParams,
       }}
     >
       {children}

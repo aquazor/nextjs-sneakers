@@ -1,9 +1,7 @@
-'use client';
-
 import { useRouter } from 'next/navigation';
-import Select from '@/components/Select';
 import { useFavoriteContext } from '@/context/favoriteContext';
 import { FavoriteSortMethod } from '@/types/favorite';
+import Select from '@/components/Select';
 
 const OPTIONS: { value: FavoriteSortMethod; name: string }[] = [
   { value: '', name: 'None' },
