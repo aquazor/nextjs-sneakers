@@ -103,6 +103,7 @@ export default function ItemsList({ data, hasMore }: ItemsListProps) {
                           const currentItem = {
                             _id: uuid(),
                             itemId,
+                            createdAt: new Date().toISOString(),
                             ...rest,
                           };
 

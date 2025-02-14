@@ -91,6 +91,7 @@ export default function ItemInfo({ item }: { item: IProduct }) {
     const currentItem = {
       _id: uuid(),
       itemId,
+      createdAt: new Date().toISOString(),
       ...rest,
     };
 
