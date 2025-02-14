@@ -23,7 +23,7 @@ export async function generateMetadata({
     openGraph: {
       title: `NextSneaks | ${item.name}`,
       description: `Find ${item.name} and more at NextSneaks. Limited editions, hottest sneaker releases.`,
-      url: `https://yourwebsite.com/item/${itemId}`,
+      url: `https://next-sneaks.vercel.app/${itemId}`,
       siteName: 'NextSneaks',
       images: [
         {
