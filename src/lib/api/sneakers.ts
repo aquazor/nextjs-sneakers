@@ -21,11 +21,16 @@ export async function fetchItems(
 
     const url = `${process.env.NEXT_PUBLIC_API_URL}/api/sneakers?${params.toString()}`;
     const res = await fetch(url, { signal });
+
+    if (!res.ok) {
+      return { items: [], hasMore: false };
+    }
+
     const data = await res.json();
     return data;
   } catch (error) {
     console.log(error);
-    throw new Error('Failed to fetch items');
+    return { items: [], hasMore: false };
   }
 }
 

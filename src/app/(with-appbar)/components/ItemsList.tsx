@@ -57,7 +57,7 @@ export default function ItemsList({ data, hasMore }: ItemsListProps) {
         </div>
       )}
 
-      {items.length && (
+      {items.length > 0 && (
         <ul className="flex flex-wrap justify-center min-[550px]:justify-start">
           {items.map((item) => {
             const itemInFavorite = favoriteItems.find(
