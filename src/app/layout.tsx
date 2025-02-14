@@ -32,7 +32,7 @@ export const metadata: Metadata = {
     siteName: 'NextSneaks',
     images: [
       {
-        url: '/og-logo.svg',
+        url: '/preview.png',
         width: 1200,
         height: 630,
         alt: 'NextSneaks – Premium Sneakers Marketplace',
@@ -45,7 +45,7 @@ export const metadata: Metadata = {
     title: 'NextSneaks – Premium Sneakers Marketplace',
     description:
       'Shop the latest and greatest sneakers. Get your hands on limited-edition kicks today!',
-    images: ['/og-logo.svg'],
+    images: ['/preview.png'],
   },
 };
 
