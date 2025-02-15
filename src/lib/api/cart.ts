@@ -1,12 +1,24 @@
 import { ICartItem, ICartItemParams } from '@/types/cart';
 
-async function getItems(): Promise<ICartItem[]> {
+async function syncAndGetItems(cartItems: ICartItem[]): Promise<ICartItem[]> {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/cart`);
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/cart`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ items: cartItems }),
+    });
+
+    if (!res.ok) {
+      console.log(`Error ${res.status}: ${res.statusText}`);
+      return [];
+    }
+
     const { items }: { items: ICartItem[] } = await res.json();
     return items;
   } catch (error) {
-    console.log(error);
+    console.log('Failed to sync cart:', error);
     return [];
   }
 }
@@ -50,7 +62,7 @@ async function deleteItem({ itemId, code }: ICartItemParams) {
 }
 
 export const cartApi = {
-  getItems,
+  syncAndGetItems,
   addItem,
   removeOrDeleteItem,
   deleteItem,

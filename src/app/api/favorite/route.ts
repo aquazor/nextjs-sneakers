@@ -5,19 +5,35 @@ import { auth } from '@/auth';
 import Favorite from '@/lib/mongoose/models/FavoriteSchema';
 import { IFavoriteItem } from '@/types/favorite';
 
-export async function GET(req: NextRequest) {
-  await dbConnect();
-
+export async function PUT(req: NextRequest) {
   try {
+    const { items }: { items: IFavoriteItem[] } = await req.json();
+
+    if (!items || items.length === 0) {
+      return NextResponse.json({ message: 'Favorite is empty' }, { status: 400 });
+    }
+
+    await dbConnect();
+
     const session = await auth();
-    if (!session?.user?.email) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    if (!session || !session.user || !session.user.email) {
+      return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
     }
 
     const user = await User.findOne({ email: session.user.email });
     if (!user) {
-      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+      return NextResponse.json({ message: 'User not found' }, { status: 404 });
     }
+
+    let favorite = await Favorite.findOne({ userId: user._id });
+
+    if (!favorite) {
+      favorite = new Favorite({ userId: user._id, items });
+    } else {
+      favorite.items = items;
+    }
+
+    await favorite.save();
 
     const { searchParams } = req.nextUrl;
     const sortParam = searchParams.getAll('sort');
@@ -29,15 +45,6 @@ export async function GET(req: NextRequest) {
         sort.push([field, order]);
       }
     });
-
-    let favorite = await Favorite.findOne({ userId: user._id });
-
-    if (!favorite) {
-      favorite = new Favorite({
-        userId: user._id,
-        items: [],
-      });
-    }
 
     const sortedItems: IFavoriteItem[] = [...favorite.items];
 
@@ -58,6 +65,6 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ items: sortedItems }, { status: 200 });
   } catch (error) {
     console.error(error);
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+    return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
   }
 }

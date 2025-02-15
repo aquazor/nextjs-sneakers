@@ -11,7 +11,7 @@ export async function DELETE(req: NextRequest) {
   try {
     const session = await auth();
     if (!session?.user?.email) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
     }
 
     const { searchParams } = req.nextUrl;
@@ -19,18 +19,18 @@ export async function DELETE(req: NextRequest) {
     const code = searchParams.get('code');
 
     if (!itemId || !code) {
-      return NextResponse.json({ error: 'Missing parameters' }, { status: 400 });
+      return NextResponse.json({ message: 'Missing parameters' }, { status: 400 });
     }
 
     const user = await User.findOne({ email: session.user.email });
     if (!user) {
-      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+      return NextResponse.json({ message: 'User not found' }, { status: 404 });
     }
 
     const cart = await Cart.findOne({ userId: user._id });
 
     if (!cart) {
-      return NextResponse.json({ error: 'Cart not found' }, { status: 404 });
+      return NextResponse.json({ message: 'Cart not found' }, { status: 404 });
     }
 
     const itemIndex = cart.items.findIndex(
@@ -56,6 +56,6 @@ export async function DELETE(req: NextRequest) {
     );
   } catch (error) {
     console.error(error);
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+    return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
   }
 }
