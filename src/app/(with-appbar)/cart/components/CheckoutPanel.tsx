@@ -1,16 +1,20 @@
+import { useMemo } from 'react';
 import { useCartContext } from '@/context/cartContext';
 import { IoBagCheckOutline } from 'react-icons/io5';
 
 export default function CheckoutPanel() {
   const { cartItems } = useCartContext();
 
-  const { price, count } = cartItems.reduce(
-    (acc, item) => {
-      const price = acc.price + item.price * item.count;
-      const count = acc.count + item.count;
-      return { price, count };
-    },
-    { price: 0, count: 0 }
+  const { price, count } = useMemo(
+    () =>
+      cartItems.reduce(
+        (acc, item) => ({
+          price: acc.price + item.price * item.count,
+          count: acc.count + item.count,
+        }),
+        { price: 0, count: 0 }
+      ),
+    [cartItems]
   );
 
   return (
@@ -25,7 +29,11 @@ export default function CheckoutPanel() {
         </p>
       </div>
 
-      <button className="px-3 w-3/4 md:w-full py-2 flex items-center justify-center gap-1 transition-colors bg-primary text-primary-foreground font-bold text-lg">
+      <button
+        className="px-3 w-3/4 md:w-full py-2 flex items-center justify-center gap-1 transition-colors bg-primary text-primary-foreground font-bold text-lg disabled:opacity-50 disabled:cursor-not-allowed"
+        disabled={count === 0}
+        aria-label="Proceed to checkout"
+      >
         CHECKOUT <IoBagCheckOutline size={20} />
       </button>
     </div>

@@ -24,16 +24,20 @@ export default function CartItem({ item, addItem, removeItem, deleteItem }: Prop
     setIsLoading(false);
   };
 
-  const handleAddItem = () => {
-    handleAsyncAction(() => addItem(item));
+  const handleAddItem = async () => {
+    await handleAsyncAction(() => addItem(item));
   };
 
   const handleRemoveItem = async () => {
-    handleAsyncAction(() => removeItem({ itemId: item.itemId, code: item.size.code }));
+    await handleAsyncAction(() =>
+      removeItem({ itemId: item.itemId, code: item.size.code })
+    );
   };
 
   const handleDeleteItem = async () => {
-    handleAsyncAction(() => deleteItem({ itemId: item.itemId, code: item.size.code }));
+    await handleAsyncAction(() =>
+      deleteItem({ itemId: item.itemId, code: item.size.code })
+    );
   };
 
   return (
@@ -47,8 +51,10 @@ export default function CartItem({ item, addItem, removeItem, deleteItem }: Prop
             src={item.url}
             width={150}
             height={150}
+            quality={100}
             className="object-cover h-[150px] w-[150px]"
-            alt="Sneakers image"
+            alt={`${item.name} sneaker`}
+            priority
           />
         </Link>
 
@@ -67,7 +73,7 @@ export default function CartItem({ item, addItem, removeItem, deleteItem }: Prop
             </li>
             <li>
               <p>
-                Size: <span className="font-bold text-lg">{item.size.value} </span>
+                Size: <span className="font-bold text-lg">{item.size.value}</span>{' '}
                 {item.maxCount <= 2 && (
                   <span className="text-sm leading-6 text-red-400 mt-0.5">
                     {item.maxCount === 1
@@ -82,7 +88,13 @@ export default function CartItem({ item, addItem, removeItem, deleteItem }: Prop
             </li>
           </ul>
 
-          <button className="absolute right-0.5 top-0.5" onClick={handleDeleteItem}>
+          <button
+            className="absolute right-0.5 top-0.5"
+            onClick={handleDeleteItem}
+            aria-label="Remove item from cart"
+            title="Remove item from cart"
+            disabled={isLoading}
+          >
             <CiSquareRemove size={26} className="text-red-400" />
           </button>
         </div>
@@ -100,7 +112,10 @@ export default function CartItem({ item, addItem, removeItem, deleteItem }: Prop
           <button
             disabled={item.count >= item.maxCount || isLoading}
             onClick={handleAddItem}
-            className={cn(item.count >= item.maxCount && 'disabled:opacity-30')}
+            className={cn(
+              'transition-all',
+              item.count >= item.maxCount && 'opacity-30 cursor-not-allowed'
+            )}
           >
             <IoAdd size={24} />
           </button>

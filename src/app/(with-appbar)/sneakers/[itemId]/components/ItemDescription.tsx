@@ -1,23 +1,23 @@
 export default function ItemDescription() {
   return (
     <div className="flex flex-col gap-6">
-      <ul className="text-lg">
-        <li className="flex gap-1">
-          <span className="font-bold">Lorem:</span>
-          <p>Lorem ipsum dolor sit amet.</p>
-        </li>
-        <li className="flex gap-1">
-          <span className="font-bold">Ipsum:</span>
-          <p>Lorem ipsum dolor sit, amet consectetur.</p>
-        </li>
-        <li className="flex gap-1">
-          <span className="font-bold">Dolor:</span>
-          <p>Lorem ipsum dolor sit.</p>
-        </li>
-      </ul>
+      <dl className="text-lg">
+        <div className="flex gap-1">
+          <dt className="font-bold">Lorem:</dt>
+          <dd>Lorem ipsum dolor sit amet.</dd>
+        </div>
+        <div className="flex gap-1">
+          <dt className="font-bold">Ipsum:</dt>
+          <dd>Lorem ipsum dolor sit, amet consectetur.</dd>
+        </div>
+        <div className="flex gap-1">
+          <dt className="font-bold">Dolor:</dt>
+          <dd>Lorem ipsum dolor sit.</dd>
+        </div>
+      </dl>
 
       <div>
-        <h5 className="text-xl mb-1 underline underline-offset-2">Description:</h5>
+        <h3 className="text-xl mb-1 underline underline-offset-2">Description:</h3>
         <p className="text-lg">
           Lorem ipsum dolor sit amet consectetur adipisicing elit. Culpa cum hic, alias
           unde est eaque veniam magni reprehenderit, incidunt voluptatibus laudantium

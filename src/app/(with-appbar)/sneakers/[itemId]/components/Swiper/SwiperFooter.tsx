@@ -30,7 +30,7 @@ export function SwiperFooter({ images, activeSlideIndex, maxImages = 0 }: Props)
           width={100}
           height={100}
           src={url}
-          alt="image"
+          alt="Sneakers image"
         />
       ))}
 

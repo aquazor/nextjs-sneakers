@@ -35,6 +35,7 @@ export default function BrandsPanel() {
               <button
                 onClick={() => setSearchValue('')}
                 className="flex items-center justify-center"
+                aria-label="Clear search"
               >
                 <IoCloseCircleOutline size={20} className="text-red-300" />
               </button>
@@ -62,6 +63,7 @@ export default function BrandsPanel() {
                 <button
                   onClick={() => setParamByKey('brands', '')}
                   className="flex items-center justify-center"
+                  aria-label="Clear all selected brands"
                 >
                   <IoCloseCircleOutline size={20} className="text-red-300" />
                 </button>
@@ -72,7 +74,11 @@ export default function BrandsPanel() {
       </div>
 
       <div className="mt-1 ml-7">
-        <ul className="overflow-auto scrollbar-thin h-[calc(1.75rem*5)] p-1 scroll-contain">
+        <ul
+          className="overflow-auto scrollbar-thin h-[calc(1.75rem*5)] p-1 scroll-contain"
+          role="listbox"
+          aria-label="Brands"
+        >
           {filteredBrands.map((brand) => {
             const isSelected = selected.some((value) => value === brand);
 
@@ -80,6 +86,8 @@ export default function BrandsPanel() {
               <li
                 key={brand}
                 onClick={() => selectBrand(brand)}
+                role="option"
+                aria-selected={isSelected}
                 className="flex gap-1 items-center cursor-pointer group focus-within:outline focus-within:outline-2 focus-within:outline-foreground"
               >
                 <input
@@ -90,6 +98,7 @@ export default function BrandsPanel() {
                   id={`brand-${brand}`}
                 />
                 <div
+                  aria-hidden="true"
                   className={cn(
                     'size-4 shrink-0 border border-border transition-colors',
                     isSelected ? 'bg-foreground' : 'bg-transparent'

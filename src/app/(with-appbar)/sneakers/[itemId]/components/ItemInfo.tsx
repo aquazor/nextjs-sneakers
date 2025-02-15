@@ -121,6 +121,8 @@ export default function ItemInfo({ item }: { item: IProduct }) {
             disabled={isLoading}
             onClick={handleToggleToFavorites}
             className="flex p-1 items-center border border-border hover:border-primary"
+            aria-label={itemInFavorite ? 'Remove from favorites' : 'Add to favorites'}
+            title={itemInFavorite ? 'Remove from favorites' : 'Add to favorites'}
           >
             {itemInFavorite ? (
               <TbHeartCheck size={36} className="[&_path]:fill-pink-300" />
@@ -136,6 +138,8 @@ export default function ItemInfo({ item }: { item: IProduct }) {
               'flex gap-2 p-1 items-center border border-border hover:border-primary',
               !size?.value || size?.count === 0 ? 'opacity-50' : 'opacity-100'
             )}
+            aria-label={isInCart ? 'Remove from cart' : 'Add to cart'}
+            title={isInCart ? 'Remove from cart' : 'Add to cart'}
           >
             {isInCart ? (
               <BsCartCheckFill size={36} className="[&_path]:fill-green-300" />
@@ -146,19 +150,34 @@ export default function ItemInfo({ item }: { item: IProduct }) {
         </div>
 
         <div className="flex justify-between gap-3 flex-wrap">
-          <div ref={menuRef} className="relative text-xl">
+          <div
+            ref={menuRef}
+            className="relative text-xl"
+            role="combobox"
+            aria-controls="size-list"
+            aria-expanded={isOpen}
+            aria-haspopup="listbox"
+          >
             <div
               onClick={() => setIsOpen((prev) => !prev)}
               className="p-2 flex gap-2 items-center border cursor-pointer hover:border-primary"
+              role="button"
+              aria-controls="size-list"
+              aria-expanded={isOpen}
             >
               <span className="text-nowrap">Select a size</span>
               <span className="font-bold">{size?.value || '...'}</span>
               <GoChevronDown className="shrink-0" />
             </div>
+
             {isOpen && (
-              <ul className="absolute grid grid-cols-2 gap-1 mt-1 top-full w-full bg-background text-center">
+              <ul
+                id="size-list"
+                className="absolute grid grid-cols-2 gap-1 mt-1 top-full w-full bg-background text-center"
+                role="listbox"
+              >
                 {sizes.map(({ code, value, count }) => (
-                  <li key={code}>
+                  <li key={code} role="option" aria-selected={size?.value === value}>
                     <button
                       disabled={count === 0}
                       onClick={() => onSelect(value)}
@@ -181,6 +200,8 @@ export default function ItemInfo({ item }: { item: IProduct }) {
             <Link
               href="/cart"
               className="px-3 py-2 flex items-center gap-1 transition-colors border border-primary bg-background text-foreground hover:bg-primary hover:text-primary-foreground font-bold text-lg"
+              aria-label="Proceed to checkout"
+              title="Proceed to checkout"
             >
               Proceed to checkout <IoBagCheckOutline size={20} />
             </Link>

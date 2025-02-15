@@ -34,6 +34,23 @@ export default function MultiRangeSlider({ min, max, step }: Props) {
     }
   }, [minPrice, maxPrice, getPercent]);
 
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    let stepValue = step;
+    if (event.shiftKey) {
+      stepValue = step;
+    }
+
+    if (event.key === 'ArrowUp' || event.key === 'ArrowRight') {
+      event.preventDefault();
+      setParamByKey('minPrice', String(Math.min(Number(minPrice) + stepValue, max - 1)));
+    }
+
+    if (event.key === 'ArrowDown' || event.key === 'ArrowLeft') {
+      event.preventDefault();
+      setParamByKey('minPrice', String(Math.max(Number(minPrice) - stepValue, min)));
+    }
+  };
+
   return (
     <div className={styles.container}>
       <input
@@ -47,11 +64,17 @@ export default function MultiRangeSlider({ min, max, step }: Props) {
           const value = Math.min(+event.target.value, Number(maxPrice) - 1);
           setParamByKey('minPrice', value.toString());
         }}
+        onKeyDown={handleKeyDown}
+        aria-label="Minimum price"
+        aria-valuenow={Number(minPrice)}
+        aria-valuemin={min}
+        aria-valuemax={max}
         className={cn(
           `${styles.thumb} ${styles.thumb__zIndex3}`,
           Number(minPrice) > max - 100 && styles.thumb__zIndex5
         )}
       />
+
       <input
         type="range"
         min={min}
@@ -63,6 +86,11 @@ export default function MultiRangeSlider({ min, max, step }: Props) {
           const value = Math.max(+event.target.value, Number(minPrice) + 1);
           setParamByKey('maxPrice', value.toString());
         }}
+        onKeyDown={handleKeyDown}
+        aria-label="Maximum price"
+        aria-valuenow={Number(maxPrice)}
+        aria-valuemin={min}
+        aria-valuemax={max}
         className={`${styles.thumb} ${styles.thumb__zIndex4}`}
       />
 

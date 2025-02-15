@@ -7,7 +7,7 @@ interface Props extends React.ComponentProps<'button'> {
 
 export default function LoadingButton({ loading, children, ...rest }: Props) {
   return (
-    <button disabled={loading} {...rest}>
+    <button aria-label="Load more" disabled={loading} {...rest}>
       {loading ? <Spinner /> : children}
     </button>
   );

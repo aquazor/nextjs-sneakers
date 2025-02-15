@@ -13,21 +13,27 @@ export default function SearchPanel() {
   return (
     <div className="flex items-center gap-2">
       <GoSearch size={24} className="shrink-0" />
-      <div className="flex w-full relative">
+
+      <div className="flex w-full relative" aria-live="polite">
+        <label htmlFor="searchTerm" className="sr-only">
+          Search products
+        </label>
+
         <input
-          value={searchTerm}
-          onChange={(e) => setParamByKey('searchTerm', e.target.value)}
-          autoComplete="off"
           id="searchTerm"
           name="searchTerm"
           type="text"
           placeholder="Search"
+          autoComplete="off"
+          value={searchTerm}
+          onChange={(e) => setParamByKey('searchTerm', e.target.value)}
           className="pl-2 py-1 pr-7 border border-border w-full placeholder:text-sm bg-background"
         />
 
         {searchTerm.length > 0 && (
           <button
             onClick={() => setParamByKey('searchTerm', '')}
+            aria-label="Clear search"
             className="absolute top-1/2 -translate-y-1/2 right-1 flex items-center justify-center"
           >
             <IoCloseCircleOutline size={20} className="text-red-300" />

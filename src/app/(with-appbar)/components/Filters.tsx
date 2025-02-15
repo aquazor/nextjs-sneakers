@@ -12,7 +12,7 @@ import SizesPanel from './SizesPanel';
 import ButtonsPanel from './ButtonsPanel';
 
 export default function Filters() {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(() => true);
   const isTablet = useIsBreakpoint(1024);
 
   useEffect(() => {
@@ -27,6 +27,9 @@ export default function Filters() {
     <div className="shrink-0 sticky top-4 max-h-fit z-[2] lg:mt-2 lg:ml-2">
       <div className="absolute lg:static top-0 left-0 shadow-xl bg-background/20 border backdrop-blur-md">
         <button
+          id="filters-toggle"
+          aria-expanded={isOpen}
+          aria-controls="filters-panel"
           className="flex lg:hidden w-full justify-between items-center gap-1 p-1"
           onClick={() => setIsOpen((prev) => !prev)}
         >
@@ -46,7 +49,11 @@ export default function Filters() {
         </button>
 
         {isOpen && (
-          <div className="bg-background min-w-52 max-w-72">
+          <aside
+            id="filters-panel"
+            aria-labelledby="filters-toggle"
+            className="bg-background min-w-52 max-w-72"
+          >
             <div className="p-2 flex flex-col gap-3">
               <SearchPanel />
               <SortPanel />
@@ -55,7 +62,7 @@ export default function Filters() {
               <SizesPanel />
               <ButtonsPanel />
             </div>
-          </div>
+          </aside>
         )}
       </div>
     </div>

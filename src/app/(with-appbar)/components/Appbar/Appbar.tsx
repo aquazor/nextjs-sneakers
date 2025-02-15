@@ -50,20 +50,30 @@ export default function Appbar() {
                   <ul className="flex gap-2 items-center">
                     <li>
                       <div className="relative">
-                        <Link href="/favorite">
+                        <Link href="/favorite" aria-label="Favorites" title="Favorites">
                           <IoHeartOutline size={36} />
                         </Link>
-                        <span className="select-none pointer-events-none absolute top-0 right-0 bg-primary rounded-full size-4 flex items-center justify-center text-xs text-primary-foreground leading-none">
+                        <span
+                          aria-live="polite"
+                          className="select-none pointer-events-none absolute top-0 right-0 bg-primary rounded-full size-4 flex items-center justify-center text-xs text-primary-foreground leading-none"
+                        >
                           {favCount}
                         </span>
                       </div>
                     </li>
                     <li>
                       <div className="relative">
-                        <Link href="/cart">
+                        <Link
+                          href="/cart"
+                          aria-label="Shopping Cart"
+                          title="Shopping Cart"
+                        >
                           <IoCartOutline size={36} />
                         </Link>
-                        <span className="select-none pointer-events-none absolute top-0 right-0 bg-primary rounded-full size-4 flex items-center justify-center text-xs text-primary-foreground leading-none">
+                        <span
+                          aria-live="polite"
+                          className="select-none pointer-events-none absolute top-0 right-0 bg-primary rounded-full size-4 flex items-center justify-center text-xs text-primary-foreground leading-none"
+                        >
                           {cartCount}
                         </span>
                       </div>
@@ -72,9 +82,14 @@ export default function Appbar() {
                 </nav>
 
                 {!session ? (
-                  <button className="px-3 py-1.5 bg-primary text-primary-foreground">
-                    <Link href="/sign-in">Sign in</Link>
-                  </button>
+                  <Link
+                    href="/sign-in"
+                    aria-label="Sign in"
+                    title="Sign in"
+                    className="px-3 py-1.5 bg-primary text-primary-foreground"
+                  >
+                    Sign in
+                  </Link>
                 ) : (
                   <UserMenu />
                 )}

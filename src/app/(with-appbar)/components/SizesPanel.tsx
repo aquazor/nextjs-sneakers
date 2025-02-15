@@ -35,6 +35,7 @@ export default function SizesPanel() {
                 <button
                   onClick={() => setParamByKey('sizes', '')}
                   className="flex items-center justify-center"
+                  aria-label="Clear selected sizes"
                 >
                   <IoCloseCircleOutline size={20} className="text-red-300" />
                 </button>
@@ -51,6 +52,8 @@ export default function SizesPanel() {
 
             return (
               <li
+                role="option"
+                aria-selected={isSelected}
                 key={size}
                 onClick={() => selectSize(size)}
                 className="flex gap-1 items-center group cursor-pointer focus-within:outline focus-within:outline-2 focus-within:outline-foreground"

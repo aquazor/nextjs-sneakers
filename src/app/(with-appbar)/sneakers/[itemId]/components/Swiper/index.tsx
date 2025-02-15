@@ -32,7 +32,7 @@ export default function Swiper({ images }: Props) {
                 src={url}
                 priority
                 className="w-full h-[400px] lg:h-[500px] xl:h-[580px] object-cover bg-primary/10 shadow-md"
-                alt="image"
+                alt="Sneakers big image"
               />
               <div className="absolute top-2 left-2 text-muted-foreground select-none">
                 {index + 1}

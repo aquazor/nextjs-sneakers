@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { v4 as uuid } from 'uuid';
@@ -29,6 +29,11 @@ export default function ItemsList({ data, hasMore }: ItemsListProps) {
     setItems(data);
     setMoreAvailable(hasMore);
   }, [data, hasMore]);
+
+  const favoriteItemIds = useMemo(
+    () => new Set(favoriteItems.map((fav) => fav.itemId)),
+    [favoriteItems]
+  );
 
   const handleLoadMore = async () => {
     setIsLoadingMore(true);
@@ -60,9 +65,7 @@ export default function ItemsList({ data, hasMore }: ItemsListProps) {
       {items.length > 0 && (
         <ul className="flex flex-wrap justify-center min-[550px]:justify-start">
           {items.map((item) => {
-            const itemInFavorite = favoriteItems.find(
-              (favItem) => favItem.itemId === item._id
-            );
+            const isFavorite = favoriteItemIds.has(item._id);
 
             return (
               <li
@@ -77,7 +80,7 @@ export default function ItemsList({ data, hasMore }: ItemsListProps) {
                         height={300}
                         quality={100}
                         src={item.url}
-                        alt="Sneakers picture"
+                        alt={item.name}
                         className="object-cover max-h-[300px] block w-full bg-primary/10"
                       />
                     </Link>
@@ -107,15 +110,18 @@ export default function ItemsList({ data, hasMore }: ItemsListProps) {
                             ...rest,
                           };
 
-                          if (itemInFavorite) {
+                          if (isFavorite) {
                             await deleteFavorite({ itemId });
-                            return;
+                          } else {
+                            await addFavorite(currentItem);
                           }
-                          await addFavorite(currentItem);
                         }}
+                        aria-label={
+                          isFavorite ? 'Remove from favorites' : 'Add to favorites'
+                        }
                         className="flex p-1 items-center border border-transparent transition-colors hover:border-primary"
                       >
-                        {itemInFavorite ? (
+                        {isFavorite ? (
                           <TbHeartCheck size={30} className="[&_path]:fill-pink-300" />
                         ) : (
                           <TbHeart size={30} />
