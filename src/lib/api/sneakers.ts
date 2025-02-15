@@ -2,7 +2,7 @@ import { MAX_PRICE, MIN_PRICE } from '@/constants';
 import { UrlFilterParams } from '@/types/filters';
 import { IProduct } from '@/types/product';
 
-export async function fetchItems(
+async function getItems(
   { skip, limit, searchTerm, brands, sizes, minPrice, maxPrice, sort }: UrlFilterParams,
   signal?: AbortSignal
 ): Promise<{ items: IProduct[]; hasMore: boolean }> {
@@ -34,11 +34,7 @@ export async function fetchItems(
   }
 }
 
-export async function fetchItemById({
-  itemId,
-}: {
-  itemId: string;
-}): Promise<{ item: IProduct }> {
+async function getItemById({ itemId }: { itemId: string }): Promise<{ item: IProduct }> {
   try {
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/sneakers/${itemId}`);
     const item = await res.json();
@@ -48,3 +44,8 @@ export async function fetchItemById({
     throw new Error(`Failed to fetch item ${itemId}`);
   }
 }
+
+export const sneakersApi = {
+  getItems,
+  getItemById,
+};

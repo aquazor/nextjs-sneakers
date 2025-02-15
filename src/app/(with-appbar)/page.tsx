@@ -1,5 +1,5 @@
 import { LIMIT_STR } from '@/constants';
-import { fetchItems } from '@/lib/api/sneakers';
+import { sneakersApi } from '@/lib/api/sneakers';
 import { UrlFilterParams } from '@/types/filters';
 import Container from '@/components/Container';
 import Filters from './components/Filters';
@@ -13,7 +13,7 @@ export default async function Home({
 }) {
   const { searchTerm, brands, sizes, minPrice, maxPrice, sort } = await searchParams;
 
-  const { items, hasMore } = await fetchItems({
+  const { items, hasMore } = await sneakersApi.getItems({
     searchTerm,
     brands,
     sizes,

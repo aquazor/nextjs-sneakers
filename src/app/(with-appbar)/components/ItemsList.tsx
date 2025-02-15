@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { v4 as uuid } from 'uuid';
 import { TbHeartCheck, TbHeart } from 'react-icons/tb';
 import { IProduct } from '@/types/product';
-import { fetchItems } from '@/lib/api/sneakers';
+import { sneakersApi } from '@/lib/api/sneakers';
 import { LIMIT_STR } from '@/constants';
 import { useFilterParamsContext } from '@/context/filtersContext';
 import { useFavoriteContext } from '@/context/favoriteContext';
@@ -33,7 +33,7 @@ export default function ItemsList({ data, hasMore }: ItemsListProps) {
   const handleLoadMore = async () => {
     setIsLoadingMore(true);
     try {
-      const newItems = await fetchItems({
+      const newItems = await sneakersApi.getItems({
         ...filterParams,
         skip: items.length.toString(),
         limit: LIMIT_STR,

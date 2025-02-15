@@ -1,5 +1,5 @@
 import { Metadata } from 'next';
-import { fetchItemById } from '@/lib/api/sneakers';
+import { sneakersApi } from '@/lib/api/sneakers';
 import Container from '@/components/Container';
 import Swiper from './components/Swiper';
 import ItemInfo from './components/ItemInfo';
@@ -15,7 +15,7 @@ export async function generateMetadata({
   params: Promise<Params>;
 }): Promise<Metadata> {
   const { itemId } = await params;
-  const { item } = await fetchItemById({ itemId });
+  const { item } = await sneakersApi.getItemById({ itemId });
 
   return {
     title: `${item.name}`,
@@ -46,7 +46,7 @@ export async function generateMetadata({
 
 export default async function Page({ params }: { params: Promise<Params> }) {
   const { itemId } = await params;
-  const { item } = await fetchItemById({ itemId });
+  const { item } = await sneakersApi.getItemById({ itemId });
 
   return (
     <Container>
