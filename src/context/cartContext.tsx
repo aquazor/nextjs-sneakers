@@ -29,7 +29,7 @@ export default function CartProvider({ children }: { children: React.ReactNode }
   const count = cartItems.reduce((acc, item) => acc + item.count, 0);
 
   useEffect(() => {
-    const fetchItems = async () => {
+    const getItems = async () => {
       setIsLoading(true);
       if (status === 'authenticated') {
         const items = await cartApi.getItems();
@@ -42,7 +42,7 @@ export default function CartProvider({ children }: { children: React.ReactNode }
       setIsLoading(false);
     };
 
-    fetchItems();
+    getItems();
   }, [status]);
 
   const addCartItem = useCallback(

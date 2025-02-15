@@ -3,9 +3,9 @@ import dbConnect from '@/lib/mongoose/dbConnect';
 import Favorite from '@/lib/mongoose/models/FavoriteSchema';
 import User from '@/lib/mongoose/models/UserSchema';
 import { auth } from '@/auth';
-import { IFavoriteItem, IFavoriteItemParams } from '@/types/favorite';
+import { IFavoriteItem } from '@/types/favorite';
 
-export async function POST(req: NextRequest) {
+export async function DELETE(req: NextRequest) {
   await dbConnect();
 
   try {
@@ -14,7 +14,12 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { itemId }: IFavoriteItemParams = await req.json();
+    const { searchParams } = req.nextUrl;
+    const itemId = searchParams.get('itemId');
+
+    if (!itemId) {
+      return NextResponse.json({ error: 'Missing parameters' }, { status: 400 });
+    }
 
     const user = await User.findOne({ email: session.user.email });
     if (!user) {

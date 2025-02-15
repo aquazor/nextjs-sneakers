@@ -25,14 +25,12 @@ async function addItem({ item }: { item: ICartItem }) {
 
 async function removeOrDeleteItem({ itemId, code }: ICartItemParams) {
   try {
-    await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/cart/remove`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        itemId,
-        code,
-      }),
-    });
+    await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/cart/remove?itemId=${itemId}&code=${code}`,
+      {
+        method: 'DELETE',
+      }
+    );
   } catch (error) {
     console.log(error);
   }
@@ -40,14 +38,12 @@ async function removeOrDeleteItem({ itemId, code }: ICartItemParams) {
 
 async function deleteItem({ itemId, code }: ICartItemParams) {
   try {
-    await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/cart/delete`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        itemId,
-        code,
-      }),
-    });
+    await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/cart/delete?itemId=${itemId}&code=${code}`,
+      {
+        method: 'DELETE',
+      }
+    );
   } catch (error) {
     console.log(error);
   }

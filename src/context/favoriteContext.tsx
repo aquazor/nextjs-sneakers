@@ -56,7 +56,7 @@ export default function FavoriteProvider({ children }: { children: React.ReactNo
   const count = favoriteItems.length;
 
   useEffect(() => {
-    const fetchItems = async () => {
+    const getItems = async () => {
       const { sort } = filterParams;
 
       if (status === 'authenticated') {
@@ -71,7 +71,7 @@ export default function FavoriteProvider({ children }: { children: React.ReactNo
       }
     };
 
-    fetchItems();
+    getItems();
   }, [status, filterParams]);
 
   const addFavorite = useCallback(

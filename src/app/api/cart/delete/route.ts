@@ -3,9 +3,9 @@ import dbConnect from '@/lib/mongoose/dbConnect';
 import Cart from '@/lib/mongoose/models/CartSchema';
 import User from '@/lib/mongoose/models/UserSchema';
 import { auth } from '@/auth';
-import { ICartItem, ICartItemParams } from '@/types/cart';
+import { ICartItem } from '@/types/cart';
 
-export async function POST(req: NextRequest) {
+export async function DELETE(req: NextRequest) {
   await dbConnect();
 
   try {
@@ -14,7 +14,13 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { itemId, code }: ICartItemParams = await req.json();
+    const { searchParams } = req.nextUrl;
+    const itemId = searchParams.get('itemId');
+    const code = searchParams.get('code');
+
+    if (!itemId || !code) {
+      return NextResponse.json({ error: 'Missing parameters' }, { status: 400 });
+    }
 
     const user = await User.findOne({ email: session.user.email });
     if (!user) {
@@ -22,6 +28,10 @@ export async function POST(req: NextRequest) {
     }
 
     const cart = await Cart.findOne({ userId: user._id });
+
+    if (!cart) {
+      return NextResponse.json({ error: 'Cart not found' }, { status: 404 });
+    }
 
     const itemIndex = cart.items.findIndex(
       (cartItem: ICartItem) =>
@@ -42,7 +52,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json(
       { message: 'Item deleted from cart', items: cart.items },
-      { status: 201 }
+      { status: 200 }
     );
   } catch (error) {
     console.error(error);

@@ -34,13 +34,12 @@ async function addItem({ item }: { item: IFavoriteItem }) {
 
 async function deleteItem({ itemId }: IFavoriteItemParams) {
   try {
-    await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/favorite/delete`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        itemId,
-      }),
-    });
+    await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/favorite/delete?itemId=${itemId}`,
+      {
+        method: 'DELETE',
+      }
+    );
   } catch (error) {
     console.log(error);
   }
