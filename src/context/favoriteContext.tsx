@@ -60,8 +60,7 @@ export default function FavoriteProvider({ children }: { children: React.ReactNo
       const { sort } = filterParams;
 
       if (status === 'authenticated') {
-        const favorite = getLocalStorage<IFavoriteItem[]>('favorite') || [];
-        const items = await favoriteApi.syncAndGetItems(favorite, { sort });
+        const items = await favoriteApi.getItems({ sort });
         setFavoriteItems(items);
         setLocalStorage('favorite', items);
       } else {

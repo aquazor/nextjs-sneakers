@@ -30,19 +30,16 @@ export default function CartProvider({ children }: { children: React.ReactNode }
 
   useEffect(() => {
     const getItems = async () => {
+      setIsLoading(true);
       if (status === 'authenticated') {
-        setIsLoading(true);
-
-        const cartItems = getLocalStorage<CartState['cartItems']>('cart') || [];
-        const items = await cartApi.syncAndGetItems(cartItems);
+        const items = await cartApi.getItems();
         setCartItems(items);
         setLocalStorage('cart', items);
-
-        setIsLoading(false);
       } else {
         const cartItems = getLocalStorage<CartState['cartItems']>('cart') || [];
         setCartItems(cartItems);
       }
+      setIsLoading(false);
     };
 
     getItems();

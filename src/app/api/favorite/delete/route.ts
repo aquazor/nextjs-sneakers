@@ -11,19 +11,19 @@ export async function DELETE(req: NextRequest) {
   try {
     const session = await auth();
     if (!session?.user?.email) {
-      return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const { searchParams } = req.nextUrl;
     const itemId = searchParams.get('itemId');
 
     if (!itemId) {
-      return NextResponse.json({ message: 'Missing parameters' }, { status: 400 });
+      return NextResponse.json({ error: 'Missing parameters' }, { status: 400 });
     }
 
     const user = await User.findOne({ email: session.user.email });
     if (!user) {
-      return NextResponse.json({ message: 'User not found' }, { status: 404 });
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
     const favorite = await Favorite.findOne({ userId: user._id });
@@ -45,6 +45,6 @@ export async function DELETE(req: NextRequest) {
     );
   } catch (error) {
     console.error(error);
-    return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }

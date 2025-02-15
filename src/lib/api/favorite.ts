@@ -1,37 +1,21 @@
 import { FavoriteSortMethod, IFavoriteItem, IFavoriteItemParams } from '@/types/favorite';
 
-async function syncAndGetItems(
-  favItems: IFavoriteItem[],
-  {
-    sort,
-  }: {
-    sort: FavoriteSortMethod;
-  }
-): Promise<IFavoriteItem[]> {
+async function getItems({
+  sort,
+}: {
+  sort: FavoriteSortMethod;
+}): Promise<IFavoriteItem[]> {
+  const params = new URLSearchParams();
+  if (sort) params.append('sort', sort);
+
   try {
-    const params = new URLSearchParams();
-    if (sort) params.append('sort', sort);
-
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/favorite?${params.toString()}`,
-      {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ items: favItems }),
-      }
+      `${process.env.NEXT_PUBLIC_API_URL}/api/favorite?${params.toString()}`
     );
-
-    if (!res.ok) {
-      console.log(`Error ${res.status}: ${res.statusText}`);
-      return [];
-    }
-
     const { items }: { items: IFavoriteItem[] } = await res.json();
     return items;
   } catch (error) {
-    console.log('Failed to sync favorite:', error);
+    console.log(error);
     return [];
   }
 }
@@ -62,7 +46,7 @@ async function deleteItem({ itemId }: IFavoriteItemParams) {
 }
 
 export const favoriteApi = {
-  syncAndGetItems,
+  getItems,
   addItem,
   deleteItem,
 };
