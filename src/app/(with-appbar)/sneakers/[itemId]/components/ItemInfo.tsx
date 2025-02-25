@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useRef, useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { IoBagCheckOutline } from 'react-icons/io5';
 import { TbHeart, TbHeartCheck } from 'react-icons/tb';
 import { BsCart, BsCartCheckFill } from 'react-icons/bs';
@@ -15,7 +15,6 @@ import { useCartContext } from '@/context/cartContext';
 import useClickOutside from '@/hooks/useClickOuside';
 
 export default function ItemInfo({ item }: { item: IProduct }) {
-  const router = useRouter();
   const params = useSearchParams();
   const sizeParam = params.get('size');
 
@@ -44,7 +43,7 @@ export default function ItemInfo({ item }: { item: IProduct }) {
     if (!size) {
       return;
     }
-    router.replace(`/sneakers/${item._id}?size=${size}`, { scroll: false });
+    window.history.replaceState(null, '', `/sneakers/${item._id}?size=${size}`);
     setIsOpen(false);
   };
 
